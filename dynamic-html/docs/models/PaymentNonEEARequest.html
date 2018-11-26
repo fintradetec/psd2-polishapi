@@ -1,0 +1,64 @@
+
+<h2>PaymentNonEEARequest</h2>
+<ul class="parameter">
+  <li class="param-required-true">requestHeader : RequestHeaderCallback
+    <br/>
+  </li>
+</ul>
+<ul class="parameter">
+  <li class="param-required-true">recipient : RecipientPISForeign
+    <br/>
+  </li>
+</ul>
+<ul class="parameter">
+  <li class="param-required-true">recipientBank : Bank
+    <br/>
+  </li>
+</ul>
+<ul class="parameter">
+  <li class="param-required-true">sender : SenderPIS
+    <br/>
+  </li>
+</ul>
+<ul class="parameter">
+  <li class="param-required-true">transferData : TransferDataCurrencyRequired
+    <br/>
+  </li>
+</ul>
+<ul class="parameter">
+  <li class="param-required-false">transferCharges : String
+    <br/>Klauzula kosztowa / The cost clause
+  </li>
+</ul>
+<ul class="parameter">
+  <li class="param-required-true">tppTransactionId : String
+    <br/>ID transakcji nadany przez TPP / Transaction ID (TPP)
+  </li>
+</ul>
+<ul class="parameter">
+  <li class="param-required-true">deliveryMode : String
+    <br/>Tryb pilności / Urgency mode
+      <dl class="param-enum">
+        <dt>Enum:
+            <dd>ExpressD0</dd>
+            <dd>UrgentD1</dd>
+            <dd>StandardD2</dd>
+        </dt>
+      </dl>
+  </li>
+</ul>
+<ul class="parameter">
+  <li class="param-required-false">system : String
+    <br/>Droga jaką przelew ma być rozliczony / The way the transfer should be settled
+      <dl class="param-enum">
+        <dt>Enum:
+            <dd>Swift</dd>
+        </dt>
+      </dl>
+  </li>
+</ul>
+<ul class="parameter">
+  <li class="param-required-false">hold : Boolean
+    <br/>Czy założyć blokadę (w przypadku np. zlecenia przelewu w dniu wolnym) / Indicates if payment should be holded
+  </li>
+</ul>

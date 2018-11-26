@@ -1,0 +1,37 @@
+
+<h2>AuthorizeRequest</h2>
+<ul class="parameter">
+  <li class="param-required-false">requestHeader : RequestHeaderWithoutToken
+    <br/>
+  </li>
+</ul>
+<ul class="parameter">
+  <li class="param-required-false">response_type : String
+    <br/>Typ odpowiedzi. Wartość stała: code
+  </li>
+</ul>
+<ul class="parameter">
+  <li class="param-required-false">client_id : String
+    <br/>Identyfikator TPP
+  </li>
+</ul>
+<ul class="parameter">
+  <li class="param-required-false">redirect_uri : String
+    <br/>Adres usługi TPP, na które zostanie wykonane przekierowanie po uwierzytelnieniu klienta ASPSP
+  </li>
+</ul>
+<ul class="parameter">
+  <li class="param-required-false">scope : String
+    <br/>Typy zgód o które prosi TPP. Lista identyfikatorów zgodna ze specyfikacją standardu Polish API.
+  </li>
+</ul>
+<ul class="parameter">
+  <li class="param-required-false">scope_details : ScopeDetailsInput
+    <br/>
+  </li>
+</ul>
+<ul class="parameter">
+  <li class="param-required-false">state : String
+    <br/>Losowa, unikalna w ramach TPP wartość – zabezpieczenie przed atakiem Cross-Site Request Forgery
+  </li>
+</ul>

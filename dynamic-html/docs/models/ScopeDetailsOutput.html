@@ -1,0 +1,54 @@
+
+<h2>ScopeDetailsOutput</h2>
+<ul class="parameter">
+  <li class="param-required-true">privilegeList : ScopeDetailsOutputPrivilegeList
+    <br/>
+  </li>
+</ul>
+<ul class="parameter">
+  <li class="param-required-true">scopeGroupType : String
+    <br/>Type of consent
+      <dl class="param-enum">
+        <dt>Enum:
+            <dd>accountInformationService</dd>
+            <dd>paymentInformationService</dd>
+            <dd>confirmationOfFunds</dd>
+        </dt>
+      </dl>
+  </li>
+</ul>
+<ul class="parameter">
+  <li class="param-required-true">consentId : String
+    <br/>Id of consent
+  </li>
+</ul>
+<ul class="parameter">
+  <li class="param-required-true">resource : ScopeDetailsOutputResource
+    <br/>
+  </li>
+</ul>
+<ul class="parameter">
+  <li class="param-required-true">recurringIndicator : Boolean
+    <br/>Whether the consent is multiple or one-time
+  </li>
+</ul>
+<ul class="parameter">
+  <li class="param-required-true">scopeTimeDuration : Integer
+    <br/>Validity in minutes
+  </li>
+</ul>
+<ul class="parameter">
+  <li class="param-required-true">scopeTimeLimit : String
+    <br/>consent valid until
+  </li>
+</ul>
+<ul class="parameter">
+  <li class="param-required-true">throttlingPolicy : String
+    <br/>Throttling policy
+      <dl class="param-enum">
+        <dt>Enum:
+            <dd>psd2Regulatory</dd>
+        </dt>
+      </dl>
+  </li>
+</ul>
