@@ -1,0 +1,62 @@
+
+<h2>TokenRequest</h2>
+<ul class="parameter">
+  <li class="param-required-false">requestHeader : RequestHeaderWithoutToken
+    <br/>
+  </li>
+</ul>
+<ul class="parameter">
+  <li class="param-required-true">grant_type : String
+    <br/>Typ zastosowanej autoryzacji. Jedna z wartości: authorization_code, refresh_token, exchange_token (rozszerzenie standardu OAuth2)
+  </li>
+</ul>
+<ul class="parameter">
+  <li class="param-required-false">Code : String
+    <br/>Kod autoryzacji uzyskany podczas żądania do usługi /authorize OAuth2. Wymagany dla grant_type&#x3D;authorization_code.
+  </li>
+</ul>
+<ul class="parameter">
+  <li class="param-required-false">redirect_uri : String
+    <br/>Adres usługi TPP, na które zostanie wykonane przekierowanie po wygenerowaniu tokena dostępowego przez ASPSP. Wymagany dla grant_type&#x3D;authorization_code.
+  </li>
+</ul>
+<ul class="parameter">
+  <li class="param-required-false">client_id : String
+    <br/>Identyfikator TPP. Wymagany dla grant_type&#x3D;authorization_code.
+  </li>
+</ul>
+<ul class="parameter">
+  <li class="param-required-false">refresh_token : String
+    <br/>Wartość tokena, który służy do uzyskania nowego tokena dostępowego dla tego samego zakresu zgód (scope, scope_details) w przypadku gdy pierwotny token utraci swoją ważność. Wymagany dla grant_type&#x3D;refresh_token.
+  </li>
+</ul>
+<ul class="parameter">
+  <li class="param-required-false">exchange_token : String
+    <br/>Wartość tokena, który służy do uzyskania nowego tokena dostępowego dla innego zakresu zgód (scope, scope_details). Wartością tego parametru powinien być token dostępowy ważnej sesji komuikacyjnej z interfejsem XS2A. Wymagany dla grant_type&#x3D;exchange_token.
+  </li>
+</ul>
+<ul class="parameter">
+  <li class="param-required-false">scope : String
+    <br/>Typy zgód o które prosi TPP. Lista identyfikatorów zgodna ze specyfikacją standardu Polish API.
+  </li>
+</ul>
+<ul class="parameter">
+  <li class="param-required-false">scope_details : ScopeDetailsInput
+    <br/>
+  </li>
+</ul>
+<ul class="parameter">
+  <li class="param-required-false">is_user_session : Boolean
+    <br/>Określa czy dana sesja jest związana z interakcją z PSU – wartości true/false. Rozszerzenie standardu OAuth2.
+  </li>
+</ul>
+<ul class="parameter">
+  <li class="param-required-false">user_ip : String
+    <br/>IP przeglądarki użytkownika (informacja na potrzeby fraud detection). Rozszerzenie standardu OAuth2. Wymagany dla grant_type&#x3D;refresh_token.
+  </li>
+</ul>
+<ul class="parameter">
+  <li class="param-required-false">user_agent : String
+    <br/>Informacja dotycząca wersji przeglądarki użytkownika (informacja na potrzeby fraud detection). Rozszerzenie standardu OAuth2. Wymagany dla grant_type&#x3D;refresh_token.
+  </li>
+</ul>
