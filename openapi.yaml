@@ -1,0 +1,3949 @@
+---
+openapi: 3.0.0
+info:
+  title: Polish API
+  description: Interface specification for services provided by third parties based on access to payment accounts. Prepared by the Polish Bank Association and its affiliates
+  version: 2.0-oas3
+servers:
+- url: https://apiHost/
+tags:
+- name: AS
+  description: Authorization Service
+- name: AIS
+  description: Account Information Service
+- name: PIS
+  description: Payment Initiation Services
+- name: CAF
+  description: Confirmation of the Availability of Funds
+paths:
+  /v1.0/auth/v1.0/authorize:
+    post:
+      tags:
+      - AS
+      summary: Requests OAuth2 authorization code
+      description: Requests OAuth2 authorization code
+      operationId: authorize
+      parameters:
+      - name: Accept-Encoding
+        in: header
+        description: Gzip, deflate
+        required: true
+        style: SIMPLE
+        explode: false
+        schema:
+          type: string
+          enum:
+          - gzip
+          - deflate
+      - name: Accept-Language
+        in: header
+        description: Prefered language of response
+        required: true
+        style: SIMPLE
+        explode: false
+        schema:
+          type: string
+      - name: Accept-Charset
+        in: header
+        description: UTF-8
+        required: true
+        style: SIMPLE
+        explode: false
+        schema:
+          type: string
+          enum:
+          - utf-8
+      - name: X-JWS-SIGNATURE
+        in: header
+        description: Detached JWS signature of the body of the payload
+        required: true
+        style: SIMPLE
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        description: Data for OAuth2 Authorization Code Request
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthorizeRequest'
+        required: true
+      responses:
+        302:
+          description: Redirection
+          headers:
+            Content-Encoding:
+              description: Gzip, deflate
+              style: SIMPLE
+              explode: false
+              schema:
+                type: string
+            Location:
+              description: URI reference for redirection
+              style: SIMPLE
+              explode: false
+              schema:
+                type: string
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        422:
+          description: Unprocessable entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: An unexpected error occured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /v1.0/auth/v1.0/authorizeExt:
+    post:
+      tags:
+      - AS
+      summary: Requests OAuth2 authorization code based on One-time authorization code issued by External Authorization Tool
+      description: Requests OAuth2 authorization code based One-time authorization code issued by External Authorization Tool. Authorization code will be delivered to TPP as callback request from ASPSP if PSU authentication is confirmed by EAT. Callback function must provide similar notification also in case of unsuccessful authentication or its abandonment.
+      operationId: authorizeExt
+      parameters:
+      - name: Accept-Encoding
+        in: header
+        description: Gzip, deflate
+        required: true
+        style: SIMPLE
+        explode: false
+        schema:
+          type: string
+          enum:
+          - gzip
+          - deflate
+      - name: Accept-Language
+        in: header
+        description: Prefered language of response
+        required: true
+        style: SIMPLE
+        explode: false
+        schema:
+          type: string
+      - name: Accept-Charset
+        in: header
+        description: UTF-8
+        required: true
+        style: SIMPLE
+        explode: false
+        schema:
+          type: string
+          enum:
+          - utf-8
+      - name: X-JWS-SIGNATURE
+        in: header
+        description: Detached JWS signature of the body of the payload
+        required: true
+        style: SIMPLE
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        description: Data for OAuth2 Authorization Code Request extended for EAT based authentication and callback response
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EatCodeRequest'
+        required: true
+      responses:
+        200:
+          description: Successful TPP and EAT Code verification
+          headers:
+            Content-Encoding:
+              description: Gzip, deflate
+              style: SIMPLE
+              explode: false
+              schema:
+                type: string
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        422:
+          description: Unprocessable entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: An unexpected error occured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /v1.0/auth/v1.0/token:
+    post:
+      tags:
+      - AS
+      summary: Requests OAuth2 access token value
+      description: Requests OAuth2 access token value
+      operationId: token
+      parameters:
+      - name: Accept-Encoding
+        in: header
+        description: Gzip, deflate
+        required: true
+        style: SIMPLE
+        explode: false
+        schema:
+          type: string
+          enum:
+          - gzip
+          - deflate
+      - name: Accept-Language
+        in: header
+        description: Prefered language of response
+        required: true
+        style: SIMPLE
+        explode: false
+        schema:
+          type: string
+      - name: Accept-Charset
+        in: header
+        description: UTF-8
+        required: true
+        style: SIMPLE
+        explode: false
+        schema:
+          type: string
+          enum:
+          - utf-8
+      - name: X-JWS-SIGNATURE
+        in: header
+        description: Detached JWS signature of the body of the payload
+        required: true
+        style: SIMPLE
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        description: Data for OAuth2 Access Token Request
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenRequest'
+        required: true
+      responses:
+        200:
+          description: Success
+          headers:
+            Content-Encoding:
+              description: Gzip, deflate
+              style: SIMPLE
+              explode: false
+              schema:
+                type: string
+            X-JWS-SIGNATURE:
+              description: Detached JWS signature of the body of the response
+              style: SIMPLE
+              explode: false
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        422:
+          description: Unprocessable entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: An unexpected error occured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /v1.0/accounts/v1.0/deleteConsent:
+    post:
+      tags:
+      - AIS
+      summary: Removes consent
+      description: Removes consent
+      operationId: deleteConsent
+      parameters:
+      - name: Accept-Encoding
+        in: header
+        description: Gzip, deflate
+        required: true
+        style: SIMPLE
+        explode: false
+        schema:
+          type: string
+          enum:
+          - gzip
+          - deflate
+      - name: Accept-Language
+        in: header
+        description: Prefered language of response
+        required: true
+        style: SIMPLE
+        explode: false
+        schema:
+          type: string
+      - name: Accept-Charset
+        in: header
+        description: UTF-8
+        required: true
+        style: SIMPLE
+        explode: false
+        schema:
+          type: string
+          enum:
+          - utf-8
+      requestBody:
+        description: Data for delete Consent Request
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeleteConsentRequest'
+        required: true
+      responses:
+        200:
+          description: Success
+          headers:
+            Content-Encoding:
+              description: Gzip, deflate
+              style: SIMPLE
+              explode: false
+              schema:
+                type: string
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        422:
+          description: Unprocessable entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: An unexpected error occured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /v1.0/accounts/v1.0/getAccounts:
+    post:
+      tags:
+      - AIS
+      summary: Get information about all user's payment account
+      description: User identification based on access token
+      operationId: getAccounts
+      parameters:
+      - name: Authorization
+        in: header
+        description: The value of the Authorization header should consist of 'type' + 'credentials', where for the approach using the 'type' token should be 'Bearer'.
+        required: true
+        style: SIMPLE
+        explode: false
+        schema:
+          type: string
+      - name: Accept-Encoding
+        in: header
+        description: Gzip, deflate
+        required: true
+        style: SIMPLE
+        explode: false
+        schema:
+          type: string
+          enum:
+          - gzip
+          - deflate
+      - name: Accept-Language
+        in: header
+        description: Prefered language of response
+        required: true
+        style: SIMPLE
+        explode: false
+        schema:
+          type: string
+      - name: Accept-Charset
+        in: header
+        description: UTF-8
+        required: true
+        style: SIMPLE
+        explode: false
+        schema:
+          type: string
+          enum:
+          - utf-8
+      - name: X-JWS-SIGNATURE
+        in: header
+        description: Detached JWS signature of the body of the payload
+        required: true
+        style: SIMPLE
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        description: Data for Accounts Request
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccountsRequest'
+        required: true
+      responses:
+        200:
+          description: Success
+          headers:
+            Content-Encoding:
+              description: Gzip, deflate
+              style: SIMPLE
+              explode: false
+              schema:
+                type: string
+            X-JWS-SIGNATURE:
+              description: Detached JWS signature of the body of the response
+              style: SIMPLE
+              explode: false
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountsResponse'
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Authorization header not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: Access denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        422:
+          description: Unprocessable entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        429:
+          description: Request limit for the requested service exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: An unexpected error occured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - xs2a_auth:
+        - ais:accounts
+  /v1.0/accounts/v1.0/getAccount:
+    post:
+      tags:
+      - AIS
+      summary: Get detailed information about user payment account
+      description: User identification based on access token
+      operationId: getAccount
+      parameters:
+      - name: Authorization
+        in: header
+        description: The value of the Authorization header should consist of 'type' + 'credentials', where for the approach using the 'type' token should be 'Bearer'.
+        required: true
+        style: SIMPLE
+        explode: false
+        schema:
+          type: string
+      - name: Accept-Encoding
+        in: header
+        description: Gzip, deflate
+        required: true
+        style: SIMPLE
+        explode: false
+        schema:
+          type: string
+          enum:
+          - gzip
+          - deflate
+      - name: Accept-Language
+        in: header
+        description: Prefered language of response
+        required: true
+        style: SIMPLE
+        explode: false
+        schema:
+          type: string
+      - name: Accept-Charset
+        in: header
+        description: UTF-8
+        required: true
+        style: SIMPLE
+        explode: false
+        schema:
+          type: string
+          enum:
+          - utf-8
+      - name: X-JWS-SIGNATURE
+        in: header
+        description: Detached JWS signature of the body of the payload
+        required: true
+        style: SIMPLE
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        description: Data for Account Request
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccountInfoRequest'
+        required: true
+      responses:
+        200:
+          description: Success
+          headers:
+            Content-Encoding:
+              description: Gzip, deflate
+              style: SIMPLE
+              explode: false
+              schema:
+                type: string
+            X-JWS-SIGNATURE:
+              description: Detached JWS signature of the body of the response
+              style: SIMPLE
+              explode: false
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountResponse'
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Authorization header not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: Access denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        422:
+          description: Unprocessable entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        429:
+          description: Request limit for the requested service exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: An unexpected error occured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - xs2a_auth:
+        - ais:accounts
+  /v1.0/accounts/v1.0/getTransactionsDone:
+    post:
+      tags:
+      - AIS
+      summary: Get list of user done transactions
+      operationId: getTransactionsDone
+      parameters:
+      - name: Authorization
+        in: header
+        description: The value of the Authorization header should consist of 'type' + 'credentials', where for the approach using the 'type' token should be 'Bearer'.
+        required: true
+        style: SIMPLE
+        explode: false
+        schema:
+          type: string
+      - name: Accept-Encoding
+        in: header
+        description: Gzip, deflate
+        required: true
+        style: SIMPLE
+        explode: false
+        schema:
+          type: string
+          enum:
+          - gzip
+          - deflate
+      - name: Accept-Language
+        in: header
+        description: Prefered language of response
+        required: true
+        style: SIMPLE
+        explode: false
+        schema:
+          type: string
+      - name: Accept-Charset
+        in: header
+        description: UTF-8
+        required: true
+        style: SIMPLE
+        explode: false
+        schema:
+          type: string
+          enum:
+          - utf-8
+      - name: X-JWS-SIGNATURE
+        in: header
+        description: Detached JWS signature of the body of the payload
+        required: true
+        style: SIMPLE
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        description: Data for Transactions Done Request
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransactionInfoRequest'
+        required: true
+      responses:
+        200:
+          description: Success
+          headers:
+            Content-Encoding:
+              description: Gzip, deflate
+              style: SIMPLE
+              explode: false
+              schema:
+                type: string
+            X-JWS-SIGNATURE:
+              description: Detached JWS signature of the body of the response
+              style: SIMPLE
+              explode: false
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionsDoneInfoResponse'
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Authorization header not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: Access denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        422:
+          description: Unprocessable entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        429:
+          description: Request limit for the requested service exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: An unexpected error occured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - xs2a_auth:
+        - ais:transactionsDone
+  /v1.0/accounts/v1.0/getTransactionsPending:
+    post:
+      tags:
+      - AIS
+      summary: Get list of user's pending transactions
+      operationId: getTransactionsPending
+      parameters:
+      - name: Authorization
+        in: header
+        description: The value of the Authorization header should consist of 'type' + 'credentials', where for the approach using the 'type' token should be 'Bearer'.
+        required: true
+        style: SIMPLE
+        explode: false
+        schema:
+          type: string
+      - name: Accept-Encoding
+        in: header
+        description: Gzip, deflate
+        required: true
+        style: SIMPLE
+        explode: false
+        schema:
+          type: string
+          enum:
+          - gzip
+          - deflate
+      - name: Accept-Language
+        in: header
+        description: Prefered language of response
+        required: true
+        style: SIMPLE
+        explode: false
+        schema:
+          type: string
+      - name: Accept-Charset
+        in: header
+        description: UTF-8
+        required: true
+        style: SIMPLE
+        explode: false
+        schema:
+          type: string
+          enum:
+          - utf-8
+      - name: X-JWS-SIGNATURE
+        in: header
+        description: Detached JWS signature of the body of the payload
+        required: true
+        style: SIMPLE
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        description: Data for Transactions Pending Request
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransactionInfoRequest'
+        required: true
+      responses:
+        200:
+          description: Success
+          headers:
+            Content-Encoding:
+              description: Gzip, deflate
+              style: SIMPLE
+              explode: false
+              schema:
+                type: string
+            X-JWS-SIGNATURE:
+              description: Detached JWS signature of the body of the response
+              style: SIMPLE
+              explode: false
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionPendingInfoResponse'
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Authorization header not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: Access denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        422:
+          description: Unprocessable entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        429:
+          description: Request limit for the requested service exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: An unexpected error occured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - xs2a_auth:
+        - ais:transactionsPending
+  /v1.0/accounts/v1.0/getTransactionsRejected:
+    post:
+      tags:
+      - AIS
+      summary: Get list of user's rejected transactions
+      operationId: getTransactionsRejected
+      parameters:
+      - name: Authorization
+        in: header
+        description: The value of the Authorization header should consist of 'type' + 'credentials', where for the approach using the 'type' token should be 'Bearer'.
+        required: true
+        style: SIMPLE
+        explode: false
+        schema:
+          type: string
+      - name: Accept-Encoding
+        in: header
+        description: Gzip, deflate
+        required: true
+        style: SIMPLE
+        explode: false
+        schema:
+          type: string
+          enum:
+          - gzip
+          - deflate
+      - name: Accept-Language
+        in: header
+        description: Prefered language of response
+        required: true
+        style: SIMPLE
+        explode: false
+        schema:
+          type: string
+      - name: Accept-Charset
+        in: header
+        description: UTF-8
+        required: true
+        style: SIMPLE
+        explode: false
+        schema:
+          type: string
+          enum:
+          - utf-8
+      - name: X-JWS-SIGNATURE
+        in: header
+        description: Detached JWS signature of the body of the payload
+        required: true
+        style: SIMPLE
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        description: Data for Transactions Rejected Request
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransactionInfoRequest'
+        required: true
+      responses:
+        200:
+          description: Success
+          headers:
+            Content-Encoding:
+              description: Gzip, deflate
+              style: SIMPLE
+              explode: false
+              schema:
+                type: string
+            X-JWS-SIGNATURE:
+              description: Detached JWS signature of the body of the response
+              style: SIMPLE
+              explode: false
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionRejectedInfoResponse'
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Authorization header not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: Access denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        422:
+          description: Unprocessable entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        429:
+          description: Request limit for the requested service exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: An unexpected error occured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - xs2a_auth:
+        - ais:transactionsRejected
+  /v1.0/accounts/v1.0/getHolds:
+    post:
+      tags:
+      - AIS
+      summary: Get list of user's holded operations
+      operationId: getHolds
+      parameters:
+      - name: Authorization
+        in: header
+        description: The value of the Authorization header should consist of 'type' + 'credentials', where for the approach using the 'type' token should be 'Bearer'.
+        required: true
+        style: SIMPLE
+        explode: false
+        schema:
+          type: string
+      - name: Accept-Encoding
+        in: header
+        description: Gzip, deflate
+        required: true
+        style: SIMPLE
+        explode: false
+        schema:
+          type: string
+          enum:
+          - gzip
+          - deflate
+      - name: Accept-Language
+        in: header
+        description: Prefered language of response
+        required: true
+        style: SIMPLE
+        explode: false
+        schema:
+          type: string
+      - name: Accept-Charset
+        in: header
+        description: UTF-8
+        required: true
+        style: SIMPLE
+        explode: false
+        schema:
+          type: string
+          enum:
+          - utf-8
+      - name: X-JWS-SIGNATURE
+        in: header
+        description: Detached JWS signature of the body of the payload
+        required: true
+        style: SIMPLE
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        description: Data for hold Request
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransactionHoldRequest'
+        required: true
+      responses:
+        200:
+          description: Success
+          headers:
+            Content-Encoding:
+              description: Gzip, deflate
+              style: SIMPLE
+              explode: false
+              schema:
+                type: string
+            X-JWS-SIGNATURE:
+              description: Detached JWS signature of the body of the response
+              style: SIMPLE
+              explode: false
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionHoldInfoResponse'
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Authorization header not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: Access denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        422:
+          description: Unprocessable entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        429:
+          description: Request limit for the requested service exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: An unexpected error occured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - xs2a_auth:
+        - ais:holds
+  /v1.0/accounts/v1.0/getTransactionDetail:
+    post:
+      tags:
+      - AIS
+      summary: Get detailed information about user's single transaction
+      operationId: getTransactionDetail
+      parameters:
+      - name: Authorization
+        in: header
+        description: The value of the Authorization header should consist of 'type' + 'credentials', where for the approach using the 'type' token should be 'Bearer'.
+        required: true
+        style: SIMPLE
+        explode: false
+        schema:
+          type: string
+      - name: Accept-Encoding
+        in: header
+        description: Gzip, deflate
+        required: true
+        style: SIMPLE
+        explode: false
+        schema:
+          type: string
+          enum:
+          - gzip
+          - deflate
+      - name: Accept-Language
+        in: header
+        description: Prefered language of response
+        required: true
+        style: SIMPLE
+        explode: false
+        schema:
+          type: string
+      - name: Accept-Charset
+        in: header
+        description: UTF-8
+        required: true
+        style: SIMPLE
+        explode: false
+        schema:
+          type: string
+          enum:
+          - utf-8
+      - name: X-JWS-SIGNATURE
+        in: header
+        description: Detached JWS signature of the body of the payload
+        required: true
+        style: SIMPLE
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        description: Data for transation detail Request
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransactionDetailRequest'
+        required: true
+      responses:
+        200:
+          description: Success
+          headers:
+            Content-Encoding:
+              description: Gzip, deflate
+              style: SIMPLE
+              explode: false
+              schema:
+                type: string
+            X-JWS-SIGNATURE:
+              description: Detached JWS signature of the body of the response
+              style: SIMPLE
+              explode: false
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionDetailResponse'
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Authorization header not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: Access denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        422:
+          description: Unprocessable entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        429:
+          description: Request limit for the requested service exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: An unexpected error occured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - xs2a_auth:
+        - ais:transationDetail
+  /v1.0/payments/v1.0/domestic:
+    post:
+      tags:
+      - PIS
+      summary: Initiate domestic transfer
+      operationId: domestic
+      parameters:
+      - name: Authorization
+        in: header
+        description: The value of the Authorization header should consist of 'type' + 'credentials', where for the approach using the 'type' token should be 'Bearer'.
+        required: true
+        style: SIMPLE
+        explode: false
+        schema:
+          type: string
+      - name: Accept-Encoding
+        in: header
+        description: Gzip, deflate
+        required: true
+        style: SIMPLE
+        explode: false
+        schema:
+          type: string
+          enum:
+          - gzip
+          - deflate
+      - name: Accept-Language
+        in: header
+        description: Prefered language of response
+        required: true
+        style: SIMPLE
+        explode: false
+        schema:
+          type: string
+      - name: Accept-Charset
+        in: header
+        description: UTF-8
+        required: true
+        style: SIMPLE
+        explode: false
+        schema:
+          type: string
+          enum:
+          - utf-8
+      - name: X-JWS-SIGNATURE
+        in: header
+        description: Detached JWS signature of the body of the payload
+        required: true
+        style: SIMPLE
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        description: Data for domestic transfer
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentDomesticRequest'
+        required: true
+      responses:
+        200:
+          description: Success
+          headers:
+            Content-Encoding:
+              description: Gzip, deflate
+              style: SIMPLE
+              explode: false
+              schema:
+                type: string
+            X-JWS-SIGNATURE:
+              description: Detached JWS signature of the body of the response
+              style: SIMPLE
+              explode: false
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddPaymentResponse'
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Authorization header not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: Access denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        422:
+          description: Unprocessable entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        429:
+          description: Request limit for the requested service exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: An unexpected error occured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - xs2a_auth:
+        - pis:domestic
+  /v1.0/payments/v1.0/EEA:
+    post:
+      tags:
+      - PIS
+      summary: Initiate SEPA foreign transfers
+      operationId: EEA
+      parameters:
+      - name: Authorization
+        in: header
+        description: The value of the Authorization header should consist of 'type' + 'credentials', where for the approach using the 'type' token should be 'Bearer'.
+        required: true
+        style: SIMPLE
+        explode: false
+        schema:
+          type: string
+      - name: Accept-Encoding
+        in: header
+        description: Gzip, deflate
+        required: true
+        style: SIMPLE
+        explode: false
+        schema:
+          type: string
+          enum:
+          - gzip
+          - deflate
+      - name: Accept-Language
+        in: header
+        description: Prefered language of response
+        required: true
+        style: SIMPLE
+        explode: false
+        schema:
+          type: string
+      - name: Accept-Charset
+        in: header
+        description: UTF-8
+        required: true
+        style: SIMPLE
+        explode: false
+        schema:
+          type: string
+          enum:
+          - utf-8
+      - name: X-JWS-SIGNATURE
+        in: header
+        description: Detached JWS signature of the body of the payload
+        required: true
+        style: SIMPLE
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        description: Data for SEPA foreign transfer
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentEEARequest'
+        required: true
+      responses:
+        200:
+          description: Success
+          headers:
+            Content-Encoding:
+              description: Gzip, deflate
+              style: SIMPLE
+              explode: false
+              schema:
+                type: string
+            X-JWS-SIGNATURE:
+              description: Detached JWS signature of the body of the response
+              style: SIMPLE
+              explode: false
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddPaymentResponse'
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Authorization header not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: Access denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        422:
+          description: Unprocessable entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        429:
+          description: Request limit for the requested service exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: An unexpected error occured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - xs2a_auth:
+        - pis:EEA
+  /v1.0/payments/v1.0/nonEEA:
+    post:
+      tags:
+      - PIS
+      summary: Initiate non SEPA foreign transfers
+      operationId: nonEEA
+      parameters:
+      - name: Authorization
+        in: header
+        description: The value of the Authorization header should consist of 'type' + 'credentials', where for the approach using the 'type' token should be 'Bearer'.
+        required: true
+        style: SIMPLE
+        explode: false
+        schema:
+          type: string
+      - name: Accept-Encoding
+        in: header
+        description: Gzip, deflate
+        required: true
+        style: SIMPLE
+        explode: false
+        schema:
+          type: string
+          enum:
+          - gzip
+          - deflate
+      - name: Accept-Language
+        in: header
+        description: Prefered language of response
+        required: true
+        style: SIMPLE
+        explode: false
+        schema:
+          type: string
+      - name: Accept-Charset
+        in: header
+        description: UTF-8
+        required: true
+        style: SIMPLE
+        explode: false
+        schema:
+          type: string
+          enum:
+          - utf-8
+      - name: X-JWS-SIGNATURE
+        in: header
+        description: Detached JWS signature of the body of the payload
+        required: true
+        style: SIMPLE
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        description: Data for non SEPA foreign transfer
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentNonEEARequest'
+        required: true
+      responses:
+        200:
+          description: Success
+          headers:
+            Content-Encoding:
+              description: Gzip, deflate
+              style: SIMPLE
+              explode: false
+              schema:
+                type: string
+            X-JWS-SIGNATURE:
+              description: Detached JWS signature of the body of the response
+              style: SIMPLE
+              explode: false
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddPaymentResponse'
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Authorization header not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: Access denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        422:
+          description: Unprocessable entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        429:
+          description: Request limit for the requested service exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: An unexpected error occured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - xs2a_auth:
+        - pis:nonEEA
+  /v1.0/payments/v1.0/tax:
+    post:
+      tags:
+      - PIS
+      summary: Initiate tax transfer
+      operationId: tax
+      parameters:
+      - name: Authorization
+        in: header
+        description: The value of the Authorization header should consist of 'type' + 'credentials', where for the approach using the 'type' token should be 'Bearer'.
+        required: true
+        style: SIMPLE
+        explode: false
+        schema:
+          type: string
+      - name: Accept-Encoding
+        in: header
+        description: Gzip, deflate
+        required: true
+        style: SIMPLE
+        explode: false
+        schema:
+          type: string
+          enum:
+          - gzip
+          - deflate
+      - name: Accept-Language
+        in: header
+        description: Prefered language of response
+        required: true
+        style: SIMPLE
+        explode: false
+        schema:
+          type: string
+      - name: Accept-Charset
+        in: header
+        description: UTF-8
+        required: true
+        style: SIMPLE
+        explode: false
+        schema:
+          type: string
+          enum:
+          - utf-8
+      - name: X-JWS-SIGNATURE
+        in: header
+        description: Detached JWS signature of the body of the payload
+        required: true
+        style: SIMPLE
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        description: Data for tax transfer
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentTaxRequest'
+        required: true
+      responses:
+        200:
+          description: Success
+          headers:
+            Content-Encoding:
+              description: Gzip, deflate
+              style: SIMPLE
+              explode: false
+              schema:
+                type: string
+            X-JWS-SIGNATURE:
+              description: Detached JWS signature of the body of the response
+              style: SIMPLE
+              explode: false
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddPaymentResponse'
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Authorization header not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: Access denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        422:
+          description: Unprocessable entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        429:
+          description: Request limit for the requested service exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: An unexpected error occured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - xs2a_auth:
+        - pis:tax
+  /v1.0/payments/v1.0/getPayment:
+    post:
+      tags:
+      - PIS
+      summary: Get the status of payment
+      operationId: getPayment
+      parameters:
+      - name: Authorization
+        in: header
+        description: The value of the Authorization header should consist of 'type' + 'credentials', where for the approach using the 'type' token should be 'Bearer'.
+        required: true
+        style: SIMPLE
+        explode: false
+        schema:
+          type: string
+      - name: Accept-Encoding
+        in: header
+        description: Gzip, deflate
+        required: true
+        style: SIMPLE
+        explode: false
+        schema:
+          type: string
+          enum:
+          - gzip
+          - deflate
+      - name: Accept-Language
+        in: header
+        description: Prefered language of response
+        required: true
+        style: SIMPLE
+        explode: false
+        schema:
+          type: string
+      - name: Accept-Charset
+        in: header
+        description: UTF-8
+        required: true
+        style: SIMPLE
+        explode: false
+        schema:
+          type: string
+          enum:
+          - utf-8
+      - name: X-JWS-SIGNATURE
+        in: header
+        description: Detached JWS signature of the body of the payload
+        required: true
+        style: SIMPLE
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        description: Payment ID
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentRequest'
+        required: true
+      responses:
+        200:
+          description: Success
+          headers:
+            Content-Encoding:
+              description: Gzip, deflate
+              style: SIMPLE
+              explode: false
+              schema:
+                type: string
+            X-JWS-SIGNATURE:
+              description: Detached JWS signature of the body of the response
+              style: SIMPLE
+              explode: false
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetPaymentResponse'
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Authorization header not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: Access denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        422:
+          description: Unprocessable entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        429:
+          description: Request limit for the requested service exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: An unexpected error occured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - xs2a_auth:
+        - pis:payment
+  /v1.0/payments/v1.0/getMultiplePayments:
+    post:
+      tags:
+      - PIS
+      summary: Get the status of multiple payments
+      operationId: getMultiplePayments
+      parameters:
+      - name: Authorization
+        in: header
+        description: The value of the Authorization header should consist of 'type' + 'credentials', where for the approach using the 'type' token should be 'Bearer'.
+        required: true
+        style: SIMPLE
+        explode: false
+        schema:
+          type: string
+      - name: Accept-Encoding
+        in: header
+        description: Gzip, deflate
+        required: true
+        style: SIMPLE
+        explode: false
+        schema:
+          type: string
+          enum:
+          - gzip
+          - deflate
+      - name: Accept-Language
+        in: header
+        description: Prefered language of response
+        required: true
+        style: SIMPLE
+        explode: false
+        schema:
+          type: string
+      - name: Accept-Charset
+        in: header
+        description: UTF-8
+        required: true
+        style: SIMPLE
+        explode: false
+        schema:
+          type: string
+          enum:
+          - utf-8
+      - name: X-JWS-SIGNATURE
+        in: header
+        description: Detached JWS signature of the body of the payload
+        required: true
+        style: SIMPLE
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        description: Payments ID list
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentsRequest'
+        required: true
+      responses:
+        200:
+          description: Success
+          headers:
+            Content-Encoding:
+              description: Gzip, deflate
+              style: SIMPLE
+              explode: false
+              schema:
+                type: string
+            X-JWS-SIGNATURE:
+              description: Detached JWS signature of the body of the response
+              style: SIMPLE
+              explode: false
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentsResponse'
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Authorization header not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: Access denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        422:
+          description: Unprocessable entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        429:
+          description: Request limit for the requested service exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: An unexpected error occured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - xs2a_auth:
+        - pis:multiplePayments
+  /v1.0/confirmation/v1.0/getConfirmationOfFunds:
+    post:
+      tags:
+      - CAF
+      summary: Confirmation of the availability of funds
+      description: Confirming the availability on the payers account of the amount necessary to execute the payment transaction, as defined in Art. 65 PSD2.
+      operationId: getConfirmationOfFunds
+      parameters:
+      - name: Accept-Encoding
+        in: header
+        description: Gzip, deflate
+        required: true
+        style: SIMPLE
+        explode: false
+        schema:
+          type: string
+          enum:
+          - gzip
+          - deflate
+      - name: Accept-Language
+        in: header
+        description: Prefered language of response
+        required: true
+        style: SIMPLE
+        explode: false
+        schema:
+          type: string
+      - name: Accept-Charset
+        in: header
+        description: UTF-8
+        required: true
+        style: SIMPLE
+        explode: false
+        schema:
+          type: string
+          enum:
+          - utf-8
+      - name: X-JWS-SIGNATURE
+        in: header
+        description: Detached JWS signature of the body of the payload
+        required: true
+        style: SIMPLE
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        description: Object with amount to check
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConfirmationOfFundsRequest'
+        required: true
+      responses:
+        200:
+          description: Success
+          headers:
+            Content-Encoding:
+              description: Gzip, deflate
+              style: SIMPLE
+              explode: false
+              schema:
+                type: string
+            X-JWS-SIGNATURE:
+              description: Detached JWS signature of the body of the response
+              style: SIMPLE
+              explode: false
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConfirmationOfFundsResponse'
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Authorization header not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: Access denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        422:
+          description: Unprocessable entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        429:
+          description: Request limit for the requested service exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: An unexpected error occured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - xs2a_auth:
+        - caf:confirmationOfFunds
+components:
+  schemas:
+    AuthorizeRequest:
+      required:
+      - requestHeader, response_type, client_id, redirect_uri, scope_details, state
+      type: object
+      properties:
+        requestHeader:
+          $ref: '#/components/schemas/RequestHeaderWithoutToken'
+        response_type:
+          type: string
+          description: 'Typ odpowiedzi. Wartość stała: code'
+        client_id:
+          type: string
+          description: Identyfikator TPP
+        redirect_uri:
+          type: string
+          description: Adres usługi TPP, na które zostanie wykonane przekierowanie po uwierzytelnieniu klienta ASPSP
+        scope:
+          type: string
+          description: Typy zgód o które prosi TPP. Lista identyfikatorów zgodna ze specyfikacją standardu Polish API.
+        scope_details:
+          $ref: '#/components/schemas/ScopeDetailsInput'
+        state:
+          type: string
+          description: Losowa, unikalna w ramach TPP wartość – zabezpieczenie przed atakiem Cross-Site Request Forgery
+      description: Klasa zapytania o uzyskanie kodu autoryzacyjnego zgodnego z OAuth2
+      xml:
+        name: AuthorizeRequest
+    EatCodeRequest:
+      required:
+      - requestHeader, requestId, response_type, eatCode, client_id, callbackURL, apiKey, scope_details
+      type: object
+      properties:
+        requestHeader:
+          $ref: '#/components/schemas/RequestHeaderWithoutTokenCallback'
+        response_type:
+          type: string
+          description: 'Typ odpowiedzi. Wartość stała: code'
+        eatCode:
+          type: string
+          description: Jednorazowy kod autoryzacyjny wygenerowany przez EAT
+        eatType:
+          $ref: '#/components/schemas/DictionaryItem'
+        client_id:
+          type: string
+          description: Identyfikator TPP
+        scope:
+          type: string
+          description: Typy zgód o które prosi TPP. Lista identyfikatorów zgodna ze specyfikacją standardu Polish API.
+        scope_details:
+          $ref: '#/components/schemas/ScopeDetailsInput'
+        state:
+          type: string
+          description: Losowa, unikalna w ramach TPP wartość – zabezpieczenie przed atakiem Cross-Site Request Forgery
+      description: Klasa zapytania o uzyskanie kodu autoryzacyjnego zgodnego z OAuth2 na podstawie przekazanego kodu jednorazowego, wygenerowanego w EAT
+      xml:
+        name: EatCodeRequest
+    TokenRequest:
+      required:
+      - grant_type
+      type: object
+      properties:
+        requestHeader:
+          $ref: '#/components/schemas/RequestHeaderWithoutToken'
+        grant_type:
+          type: string
+          description: 'Typ zastosowanej autoryzacji. Jedna z wartości: authorization_code,
+            refresh_token, exchange_token (rozszerzenie standardu OAuth2)'
+        Code:
+          type: string
+          description: Kod autoryzacji uzyskany podczas żądania do usługi /authorize OAuth2. Wymagany dla grant_type=authorization_code.
+        redirect_uri:
+          type: string
+          description: Adres usługi TPP, na które zostanie wykonane przekierowanie po wygenerowaniu tokena dostępowego przez ASPSP. Wymagany dla grant_type=authorization_code.
+        client_id:
+          type: string
+          description: Identyfikator TPP. Wymagany dla grant_type=authorization_code.
+        refresh_token:
+          type: string
+          description: Wartość tokena, który służy do uzyskania nowego tokena dostępowego dla tego samego zakresu zgód (scope, scope_details) w przypadku gdy pierwotny token utraci swoją ważność. Wymagany dla grant_type=refresh_token.
+        exchange_token:
+          type: string
+          description: Wartość tokena, który służy do uzyskania nowego tokena dostępowego dla innego zakresu zgód (scope, scope_details). Wartością tego parametru powinien być token dostępowy ważnej sesji komuikacyjnej z interfejsem XS2A. Wymagany dla grant_type=exchange_token.
+        scope:
+          type: string
+          description: Typy zgód o które prosi TPP. Lista identyfikatorów zgodna ze specyfikacją standardu Polish API.
+        scope_details:
+          $ref: '#/components/schemas/ScopeDetailsInput'
+        is_user_session:
+          type: boolean
+          description: Określa czy dana sesja jest związana z interakcją z PSU – wartości true/false. Rozszerzenie standardu OAuth2.
+        user_ip:
+          type: string
+          description: IP przeglądarki użytkownika (informacja na potrzeby fraud detection). Rozszerzenie standardu OAuth2. Wymagany dla grant_type=refresh_token.
+        user_agent:
+          type: string
+          description: Informacja dotycząca wersji przeglądarki użytkownika (informacja na potrzeby fraud detection). Rozszerzenie standardu OAuth2. Wymagany dla grant_type=refresh_token.
+      description: Klasa zapytania o uzyskanie tokena dostępowego zgodnego z OAuth2
+      xml:
+        name: TokenRequest
+    TokenResponse:
+      required:
+      - responseHeader, access_token, token_type, expires_in, scope_details
+      type: object
+      properties:
+        responseHeader:
+          $ref: '#/components/schemas/ResponseHeader'
+        access_token:
+          type: string
+          description: Wartość wygenerowanego tokena dostępowego
+        token_type:
+          type: string
+          description: Typ tokena dostępowego. Dozwolona wartość to Bearer.
+        expires_in:
+          type: string
+          description: Czas ważności tokena dostępowego, po którym zostanie on unieważniony
+        refresh_token:
+          type: string
+          description: Wartość wygenerowanego tokena służącego do uzyskania nowego tokena dostępowego bez konieczności ponownej autoryzacji
+        scope:
+          type: string
+          description: Typy zgód które uzyskał TPP. Lista identyfikatorów zgodna ze specyfikacją standardu Polish API.
+        scope_details:
+          $ref: '#/components/schemas/ScopeDetailsOutput'
+      description: Klasa odpowiedzi na zapytanie TPP o wygenerowanie tokena dostępowego
+    DeleteConsentRequest:
+      required:
+      - consentId
+      type: object
+      properties:
+        consentId:
+          type: string
+          description: Identyfikator zgody / Consent ID
+      description: Klasa zapytania o usunięcie zgody na dostęp do AIS
+      xml:
+        name: DeleteConsentRequest
+    AccountsRequest:
+      required:
+      - requestHeader
+      type: object
+      properties:
+        requestHeader:
+          $ref: '#/components/schemas/RequestHeaderCallback'
+        isDirectPsu:
+          type: boolean
+          description: Znacznik informujący czy request jest przesłany bezpośrednio przez PSU / Is request sent by PSU directly
+        pageId:
+          type: string
+          description: 'Używane w celu stronicowania danych: numer rachunku rozpoczynający
+            stronę / Account number beginning the page (paging info)'
+        perPage:
+          type: number
+          description: 'Używane w celu stronicowania danych: wielkość strony danych
+            / Page size (paging info)'
+          format: int32
+      description: Klasa zapytania o rachunki / Accounts Request Class
+      xml:
+        name: AccountsRequest
+    AccountResponse:
+      required:
+      - responseHeader
+      type: object
+      properties:
+        responseHeader:
+          $ref: '#/components/schemas/ResponseHeader'
+        account:
+          $ref: '#/components/schemas/AccountInfo'
+      description: Klasa odpowiedzi na zapytania o konto PSU / PSU's Account Response Class
+    AccountsResponse:
+      required:
+      - responseHeader
+      type: object
+      properties:
+        responseHeader:
+          $ref: '#/components/schemas/ResponseHeader'
+        accounts:
+          type: array
+          items:
+            $ref: '#/components/schemas/AccountBaseInfo'
+        pageInfo:
+          $ref: '#/components/schemas/PageInfo'
+      description: Klasa odpowiedzi na zapytania o wiele kont PSU / PSU's Multiple Accounts Response Class
+    AccountBaseInfo:
+      required:
+      - accountNumber
+      - accountType
+      - accountTypeName
+      type: object
+      properties:
+        accountNumber:
+          type: string
+          description: Numer rachunku (częściowo zamaskowany) / Account number (partly masked)
+        accountTypeName:
+          type: string
+          description: Nazwa typu rachunku / Account type name
+        accountType:
+          type: string
+          description: Typ rachunku / Account type
+      description: Klasa informacji o koncie / Account Information Class
+      xml:
+        name: AccountBaseInfo
+    AccountInfo:
+      required:
+      - accountNumber
+      - availableBalance
+      - bookingBalance
+      - nameAddress
+      type: object
+      properties:
+        accountNumber:
+          type: string
+          description: Numer rachunku / Account number
+        nameAddress:
+          $ref: '#/components/schemas/NameAddress'
+        accountType:
+          $ref: '#/components/schemas/DictionaryItem'
+        accountTypeName:
+          maxLength: 32
+          type: string
+          description: Nazwa typu rachunku (definiowana przez ASPSP) / Account's type name (defined by ASPSP)
+        accountNameClient:
+          maxLength: 32
+          type: string
+          description: Nazwa konta ustawiona przez klienta / Account name set by the client
+        currency:
+          maxLength: 3
+          type: string
+          description: Waluta rachunku / Currency
+        availableBalance:
+          type: string
+          description: Dostępne środki - po wykonaniu transakcji / Available funds
+        bookingBalance:
+          type: string
+          description: Saldo księgowe rachunku - po wykonaniu transakcji / Book balance of the account
+        bank:
+          $ref: '#/components/schemas/BankAccountInfo'
+        auxData:
+          $ref: '#/components/schemas/Map'
+      description: Klasa informacji o koncie / Account Information Class
+      xml:
+        name: AccountInfo
+    AccountInfoRequest:
+      required:
+      - accountNumber
+      - requestHeader
+      type: object
+      properties:
+        requestHeader:
+          $ref: '#/components/schemas/RequestHeaderAIS'
+        accountNumber:
+          type: string
+          description: Numer rachunku / Account number
+      description: Klasa zapytania o pojedynczy rachunek / Account Information Request Class
+      xml:
+        name: AccountInfoRequest
+    TransactionInfoRequestBase:
+      type: object
+      properties:
+        requestHeader:
+          $ref: '#/components/schemas/RequestHeaderAISCallback'
+        accountNumber:
+          type: string
+          description: Numer rachunku / Account number
+        transactionIdFrom:
+          maxLength: 64
+          type: string
+          description: 'Element filtru: transacje od podanego identyfikatora transakcji
+            / Filter element'
+        transactionDateFrom:
+          maxLength: 10
+          type: string
+          description: 'Element filtru: data transakcji od, YYYY-MM-DD / Filter element'
+          format: date
+        transactionDateTo:
+          maxLength: 10
+          type: string
+          description: 'Element filtru: data transakcji do, YYYY-MM-DD / Filter element'
+          format: date
+        bookingDateFrom:
+          maxLength: 10
+          type: string
+          description: 'Element filtru: data księgowania od, YYYY-MM-DD / Filter element'
+          format: date
+        bookingDateTo:
+          maxLength: 10
+          type: string
+          description: 'Element filtru: data księgowania do, YYYY-MM-DD / Filter element'
+          format: date
+        minAmount:
+          pattern: ^\d*\.\d{2}$
+          type: string
+          description: 'Element filtru: kwota od / Filter element'
+        maxAmount:
+          pattern: ^\d*\.\d{2}$
+          type: string
+          description: 'Element filtru: kwota do / Filter element'
+        pageId:
+          type: string
+          description: 'Używane w celu stronicowania danych: numer transakcji rozpoczynający
+            stronę / Transaction number beginning the page (paging info)'
+        perPage:
+          type: number
+          description: 'Używane w celu stronicowania danych: wielkość strony danych
+            / Page size (paging info)'
+          format: int32
+      description: Bazowa klasa dla zapytań o transakcje / Transaction Information Request Base Class
+      xml:
+        name: TransactionInfoRequestBase
+    TransactionInfoRequest:
+      required:
+      - accountNumber
+      - requestHeader
+      type: object
+      properties:
+        type:
+          type: string
+          description: 'Element filtru: transakcji / Filter element'
+          enum:
+          - CREDIT
+          - DEBIT
+      description: Klasa zapytania o transakcje / Transaction Information Request Class
+      xml:
+        name: TransactionInfoRequest
+      allOf:
+      - $ref: '#/components/schemas/TransactionInfoRequestBase'
+    TransactionHoldRequest:
+      required:
+      - accountNumber
+      - requestHeader
+      type: object
+      properties:
+        type:
+          type: string
+          description: 'Element filtru: transakcji / Filter element'
+          enum:
+          - DEBIT
+      description: Klasa zapytania o transakcje / Transaction Information Request Class
+      xml:
+        name: TransactionHoldRequest
+      allOf:
+      - $ref: '#/components/schemas/TransactionInfoRequestBase'
+    TransactionInfoBase:
+      required:
+      - amount
+      - description
+      - transactionId
+      - transactionType
+      type: object
+      properties:
+        transactionId:
+          maxLength: 64
+          type: string
+          description: ID transakcji nadany przez ASPSP / Transaction ID (ASPSP)
+        amount:
+          pattern: ^\d*\.\d{2}$
+          type: string
+          description: Kwota transakcji / Amount of the transaction
+        currency:
+          maxLength: 3
+          type: string
+          description: Kod ISO waluty transakcji / Currency (ISO)
+        description:
+          maxLength: 140
+          type: string
+          description: Tytuł transakcji / Description of the transaction
+        transactionType:
+          maxLength: 100
+          type: string
+          description: Typ transakcji / Transaction type
+        tradeDate:
+          type: string
+          description: Data operacji, YYYY-MM-DDThh:mm:ss[.mmm] / Date of the operation
+          format: date
+        mcc:
+          type: string
+          description: Kod dla każdej transakcji/operacji wykonanej przy użyciu karty / A code of each transaction performed by card
+        auxData:
+          $ref: '#/components/schemas/Map'
+      description: Klasa bazowa informacji o transakcji / Transaction Information Base Class
+    TransactionHoldInfo:
+      required:
+      - amount
+      - description
+      - recipient
+      - sender
+      - transactionId
+      - transactionType
+      type: object
+      properties:
+        type:
+          type: string
+          description: Typ transakcji uznanie/obciążenie / Transaction type (credit/debit)
+          enum:
+          - DEBIT
+        holdExpirationDate:
+          type: string
+          description: Data ważności blokady
+          format: datetime
+        initiator:
+          $ref: '#/components/schemas/NameAddress'
+        sender:
+          $ref: '#/components/schemas/SenderRecipient'
+        recipient:
+          $ref: '#/components/schemas/SenderRecipient'
+      description: Klasa opisująca oczekującą transakcję płatniczą
+      xml:
+        name: TransactionHoldInfo
+      allOf:
+      - $ref: '#/components/schemas/TransactionInfoBase'
+    TransactionPendingInfo:
+      required:
+      - amount
+      - description
+      - transactionId
+      - transactionType
+      type: object
+      properties:
+        type:
+          type: string
+          description: Typ transakcji uznanie/obciążenie / Transaction type (credit/debit)
+          enum:
+          - CREDIT
+          - DEBIT
+        initiator:
+          $ref: '#/components/schemas/NameAddress'
+        sender:
+          $ref: '#/components/schemas/SenderRecipient'
+        recipient:
+          $ref: '#/components/schemas/SenderRecipient'
+      description: Klasa opisująca oczekującą transakcję płatniczą. Jest to transakcja niezaksięgowana, niemodyfikowalna, wpływającej na dostępne środki (saldo dostępne).
+      xml:
+        name: TransactionPendingInfo
+      allOf:
+      - $ref: '#/components/schemas/TransactionInfoBase'
+    TransactionRejectedInfo:
+      required:
+      - amount
+      - description
+      - recipient
+      - sender
+      - transactionId
+      - transactionType
+      type: object
+      properties:
+        type:
+          type: string
+          description: Typ transakcji uznanie/obciążenie / Transaction type (credit/debit)
+          enum:
+          - CREDIT
+          - DEBIT
+        initiator:
+          $ref: '#/components/schemas/NameAddress'
+        sender:
+          $ref: '#/components/schemas/SenderRecipient'
+        recipient:
+          $ref: '#/components/schemas/SenderRecipient'
+        rejectionReason:
+          maxLength: 140
+          type: string
+          description: Powod odrzucenia
+        rejectionDate:
+          type: string
+          description: Data odrzucenia, YYYY-MM-DDThh:mm:ss[.mmm]
+          format: date
+      description: Klasa opisująca odrzuconą transakcję płatniczą
+      xml:
+        name: TransactionRejectedInfo
+      allOf:
+      - $ref: '#/components/schemas/TransactionInfoBase'
+    TransactionInfo:
+      required:
+      - amount
+      - description
+      - recipient
+      - sender
+      - transactionId
+      - transactionType
+      type: object
+      properties:
+        type:
+          type: string
+          description: Typ transakcji uznanie/obciążenie / Transaction type (credit/debit)
+          enum:
+          - CREDIT
+          - DEBIT
+        transactionStatus:
+          $ref: '#/components/schemas/DictionaryItem'
+        initiator:
+          $ref: '#/components/schemas/NameAddress'
+        sender:
+          $ref: '#/components/schemas/SenderRecipient'
+        recipient:
+          $ref: '#/components/schemas/SenderRecipient'
+        bookingDate:
+          type: string
+          description: Data księgowania, YYYY-MM-DDThh:mm:ss[.mmm]
+          format: date
+        postTransactionBalance:
+          type: string
+          description: Saldo rachunku po transakcji
+      description: Klasa opisująca zaksięgowaną transakcję płatniczą
+      xml:
+        name: TransactionInfo
+      allOf:
+      - $ref: '#/components/schemas/TransactionInfoBase'
+    TransactionsDoneInfoResponse:
+      required:
+      - responseHeader
+      type: object
+      properties:
+        responseHeader:
+          $ref: '#/components/schemas/ResponseHeader'
+        transactions:
+          type: array
+          items:
+            $ref: '#/components/schemas/TransactionInfo'
+        pageInfo:
+          $ref: '#/components/schemas/PageInfo'
+      description: Klasa odpowiedzi zawierająca listę transakcji done / Done Transaction Information Response Class
+      xml:
+        name: TransactionsDoneInfoResponse
+    TransactionPendingInfoResponse:
+      required:
+      - responseHeader
+      type: object
+      properties:
+        responseHeader:
+          $ref: '#/components/schemas/ResponseHeader'
+        transactions:
+          type: array
+          items:
+            $ref: '#/components/schemas/TransactionPendingInfo'
+        pageInfo:
+          $ref: '#/components/schemas/PageInfo'
+      description: Klasa odpowiedzi zawierająca listę transakcji pending / Pending Transaction Information Response Class
+      xml:
+        name: TransactionPendingInfoResponse
+    TransactionRejectedInfoResponse:
+      required:
+      - responseHeader
+      type: object
+      properties:
+        responseHeader:
+          $ref: '#/components/schemas/ResponseHeader'
+        transactions:
+          type: array
+          items:
+            $ref: '#/components/schemas/TransactionRejectedInfo'
+        pageInfo:
+          $ref: '#/components/schemas/PageInfo'
+      description: Klasa odpowiedzi zawierająca listę transakcji rejected / Rejected Transaction Information Response Class
+      xml:
+        name: TransactionRejectedInfoResponse
+    TransactionHoldInfoResponse:
+      required:
+      - responseHeader
+      type: object
+      properties:
+        responseHeader:
+          $ref: '#/components/schemas/ResponseHeader'
+        transactions:
+          type: array
+          items:
+            $ref: '#/components/schemas/TransactionHoldInfo'
+        pageInfo:
+          $ref: '#/components/schemas/PageInfo'
+      description: Klasa odpowiedzi zawierająca listę transakcji zawieszonych / Hold Transaction Information Response Class
+      xml:
+        name: TransactionHoldInfoResponse
+    TransactionDetailRequest:
+      required:
+      - requestHeader
+      - transactionId
+      type: object
+      properties:
+        requestHeader:
+          $ref: '#/components/schemas/RequestHeaderAIS'
+        transactionId:
+          maxLength: 64
+          type: string
+          description: ID transakcji / Transaction ID
+        accountNumber:
+          maxLength: 34
+          type: string
+          description: Numer konta nadawcy / Sender account number
+        bookingDate:
+          type: string
+          description: Data zaksięgowania operacji, YYYY-MM-DD / Transaction booking date
+          format: date
+      description: Klasa zapytania o pojedynczą transakcję / Transaction Detail Request Class
+      xml:
+        name: TransactionDetailRequest
+    Payor:
+      required:
+      - payorId
+      - payorIdType
+      type: object
+      properties:
+        payorId:
+          maxLength: 20
+          type: string
+          description: Identyfikator płatnika / Payor ID
+        payorIdType:
+          maxLength: 20
+          type: string
+          description: Typ identyfikatora płatnika / Payor ID type
+          enum:
+          - N
+          - P
+          - R
+          - "1"
+          - "2"
+          - "3"
+      description: Klasa informacji o płatniku do US / Tax Payor Information Class
+      xml:
+        name: Payor
+    SocialSecurityPayor:
+      type: object
+      properties:
+        nip:
+          maxLength: 10
+          type: string
+          description: Numer Identyfikacji Podatkowej / Payor's Tax Identification Number
+        additionalPayorId:
+          maxLength: 20
+          type: string
+          description: Dodatkowy numer identyfikacyjny płatnika / Payor's additional identification number
+        additionalPayorIdType:
+          maxLength: 20
+          type: string
+          description: Typ dodatkowego identyfikatora płatnika / Payor's additional identifier type
+          enum:
+          - P
+          - R
+          - "1"
+          - "2"
+      description: Klasa informacji o płatniku do ZUS / Polish Social Security Institution (ZUS) Payor Information Class
+      xml:
+        name: SocialSecurityPayor
+    TransactionInfoZUS:
+      type: object
+      properties:
+        payerInfo:
+          $ref: '#/components/schemas/SocialSecurityPayor'
+        contributionType:
+          maxLength: 1
+          type: string
+          description: Typ wpłaty / Contribution type
+        contributionId:
+          maxLength: 2
+          type: string
+          description: Numer deklaracji / Contribution identifier
+        contributionPeriod:
+          maxLength: 6
+          type: string
+          description: 'Okres deklaracji / Contribution period, Format: MMYYYY'
+        paymentTypeId:
+          maxLength: 1
+          type: string
+          description: Identyfikator typu płatności / Payment type ID
+        obligationId:
+          maxLength: 1
+          type: string
+          description: Numer tytułu wykonawczego / Obligation identifier or number
+      description: Klasa informacji danych dla przelewu do ZUS / ZUS Transfer Information Class
+      xml:
+        name: TransactionInfoZUS
+    TransactionInfoTax:
+      required:
+      - formCode
+      - payerInfo
+      - periodId
+      - periodType
+      - year
+      type: object
+      properties:
+        payerInfo:
+          $ref: '#/components/schemas/Payor'
+        formCode:
+          maxLength: 7
+          type: string
+          description: Symbol formularza Urzędu Skarbowego lub Izby Celnej / Tax authority form symbol
+        periodId:
+          maxLength: 7
+          type: string
+          description: Numer okresu / Period number
+        periodType:
+          maxLength: 7
+          type: string
+          description: Typ okresu / Period type
+        year:
+          maxLength: 4
+          type: number
+          description: Rok okresu / Period year
+          format: int32
+        obligationId:
+          maxLength: 40
+          type: string
+          description: Identyfikator zobowiązania, z którego wynika należność podatku np. decyzja, tytuł wykonawczy, postanowienie / Obligation ID
+        taxAuthorityName:
+          type: string
+          description: Nazwa urzędu skarbowego lub izby celnej / The name of the Tax Authority
+      description: Klasa informacji danych dla przelewu podatkowego do Urzędu Skarbowego lub Izby Celnej / Tax Transfer
+      xml:
+        name: TransactionInfoTax
+    TransactionInfoCard:
+      type: object
+      properties:
+        cardHolder:
+          type: string
+          description: Właściciel karty / Card holder
+        cardNumber:
+          type: string
+          description: Numer karty / Card number
+      description: Klasa reprezentująca informacje o karcie w ramach transakcji / Transaction Card Information Class
+    TransactionDetailResponse:
+      required:
+      - baseInfo
+      - responseHeader
+      type: object
+      properties:
+        responseHeader:
+          $ref: '#/components/schemas/ResponseHeader'
+        baseInfo:
+          $ref: '#/components/schemas/TransactionInfo'
+        zusInfo:
+          $ref: '#/components/schemas/TransactionInfoZUS'
+        usInfo:
+          $ref: '#/components/schemas/TransactionInfoTax'
+        cardInfo:
+          $ref: '#/components/schemas/TransactionInfoCard'
+        currencyDate:
+          type: string
+          description: Data kursu waluty, YYYY-MM-DDThh:mm:ss[.mmm] / Date of the currency exchange rate
+          format: date
+        transactionRate:
+          type: array
+          items:
+            $ref: '#/components/schemas/CurrencyRate'
+        baseCurrency:
+          maxLength: 3
+          type: string
+          description: Waluta oryginalna transakcji, kod ISO / Currency of the transaction, ISO code
+        amountBaseCurrency:
+          pattern: ^\d*\.\d{2}$
+          type: string
+          description: Kwota w oryginalnej walucie / Amount of the transaction
+        usedPaymentInstrumentId:
+          maxLength: 32
+          type: string
+          description: Unikalny identyfikator instrumentu płatniczego, za którego pomocą wykonano transakcję / Payment Instrument ID
+        tppTransactionId:
+          maxLength: 64
+          type: string
+          description: Unikalny identyfikator transakcji po stronie TPP / Transaction ID (TPP)
+        tppName:
+          maxLength: 32
+          type: string
+          description: Nazwa TPP / TPP name
+        rejectionReason:
+          maxLength: 140
+          type: string
+          description: Przyczyna odrzucenia / Reason for rejection
+        holdExpirationDate:
+          type: string
+          description: Data ważności blokady
+          format: datetime
+      description: Klasa odpowiedzi na zapytanie o transakcję /  Transaction Detail Response Class
+      xml:
+        name: TransactionDetailResponse
+    PaymentDomesticRequest:
+      required:
+      - deliveryMode
+      - recipient
+      - requestHeader
+      - sender
+      - tppTransactionId
+      - transferData
+      type: object
+      properties:
+        requestHeader:
+          $ref: '#/components/schemas/RequestHeaderCallback'
+        recipient:
+          $ref: '#/components/schemas/RecipientPIS'
+        sender:
+          $ref: '#/components/schemas/SenderPIS'
+        transferData:
+          $ref: '#/components/schemas/TransferData'
+        tppTransactionId:
+          maxLength: 64
+          type: string
+          description: ID transakcji nadany przez TPP / Transaction ID (TPP)
+        deliveryMode:
+          type: string
+          description: Tryb pilności / Urgency mode
+          enum:
+          - ExpressD0
+          - StandardD1
+        system:
+          type: string
+          description: Droga jaką przelew ma być rozliczony / The way the transfer should be settled
+          enum:
+          - Elixir
+          - ExpressElixir
+          - Sorbnet
+          - BlueCash
+          - Internal
+        hold:
+          type: boolean
+          description: Czy założyć blokadę (w przypadku np. zlecenia przelewu w dniu wolnym) / Indicates if payment should be holded
+      description: Klasa zlecenia przelewu krajowego / Domestic Transfer Request Class
+    PaymentEEARequest:
+      required:
+      - deliveryMode
+      - recipient
+      - requestHeader
+      - sender
+      - tppTransactionId
+      - transferData
+      type: object
+      properties:
+        requestHeader:
+          $ref: '#/components/schemas/RequestHeaderCallback'
+        recipient:
+          $ref: '#/components/schemas/RecipientPISForeign'
+        sender:
+          $ref: '#/components/schemas/SenderPIS'
+        transferData:
+          $ref: '#/components/schemas/TransferDataCurrencyRequired'
+        tppTransactionId:
+          maxLength: 64
+          type: string
+          description: ID transakcji nadany przez TPP / Transaction ID (TPP)
+        deliveryMode:
+          type: string
+          description: Tryb pilności / Urgency mode
+          enum:
+          - ExpressD0
+          - StandardD1
+        system:
+          type: string
+          description: Droga jaką przelew ma być rozliczony / The way the transfer should be settled
+          enum:
+          - SEPA
+          - InstantSEPA
+          - Target
+        hold:
+          type: boolean
+          description: Czy założyć blokadę (w przypadku np. zlecenia przelewu w dniu wolnym) / Indicates if payment should be holded
+      description: Klasa zlecenia przelewu zagranicznego SEPA / EEA Transfer Request Class
+      xml:
+        name: PaymentEEAAddRequest
+    PaymentNonEEARequest:
+      required:
+      - deliveryMode
+      - recipient
+      - recipientBank
+      - requestHeader
+      - sender
+      - tppTransactionId
+      - transferData
+      type: object
+      properties:
+        requestHeader:
+          $ref: '#/components/schemas/RequestHeaderCallback'
+        recipient:
+          $ref: '#/components/schemas/RecipientPISForeign'
+        recipientBank:
+          $ref: '#/components/schemas/Bank'
+        sender:
+          $ref: '#/components/schemas/SenderPIS'
+        transferData:
+          $ref: '#/components/schemas/TransferDataCurrencyRequired'
+        transferCharges:
+          maxLength: 3
+          type: string
+          description: Klauzula kosztowa / The cost clause
+        tppTransactionId:
+          maxLength: 64
+          type: string
+          description: ID transakcji nadany przez TPP / Transaction ID (TPP)
+        deliveryMode:
+          type: string
+          description: Tryb pilności / Urgency mode
+          enum:
+          - ExpressD0
+          - UrgentD1
+          - StandardD2
+        system:
+          type: string
+          description: Droga jaką przelew ma być rozliczony / The way the transfer should be settled
+          enum:
+          - Swift
+        hold:
+          type: boolean
+          description: Czy założyć blokadę (w przypadku np. zlecenia przelewu w dniu wolnym) / Indicates if payment should be holded
+      description: Klasa zlecenia przelewu zagranicznego innego niż SEPA / NonEEA Transfer Request Class
+      xml:
+        name: PaymentNonEEARequest
+    PaymentTaxRequest:
+      required:
+      - deliveryMode
+      - recipient
+      - requestHeader
+      - sender
+      - tppTransactionId
+      - transferData
+      type: object
+      properties:
+        requestHeader:
+          $ref: '#/components/schemas/RequestHeaderCallback'
+        recipient:
+          $ref: '#/components/schemas/RecipientPISTax'
+        sender:
+          $ref: '#/components/schemas/SenderPIS'
+        transferData:
+          $ref: '#/components/schemas/TransferDataCurrencyRequired'
+        usInfo:
+          $ref: '#/components/schemas/TransactionInfoTax'
+        tppTransactionId:
+          maxLength: 64
+          type: string
+          description: ID transakcji nadany przez TPP / Transaction ID (TPP)
+        deliveryMode:
+          type: string
+          description: Tryb pilności / Urgency mode
+          enum:
+          - ExpressD0
+          - StandardD1
+        system:
+          type: string
+          description: Droga jaką przelew ma być rozliczony / The way the transfer should be settled
+          enum:
+          - Elixir
+          - ExpressElixir
+        hold:
+          type: boolean
+          description: Czy założyć blokadę (w przypadku np. zlecenia przelewu w dniu wolnym) / Indicates if payment should be holded
+      description: Klasa zlecenia przelewu podatkowego / Tax Transfer Request Class
+      xml:
+        name: PaymentTaxRequest
+    PaymentRequest:
+      required:
+      - requestHeader
+      - transactionId
+      type: object
+      properties:
+        requestHeader:
+          $ref: '#/components/schemas/RequestHeader'
+        transactionId:
+          maxLength: 14
+          type: string
+          description: Identyfikator płatności / Transaction ID
+      description: Klasa zapytania o status płatności / Payment Request Class
+      xml:
+        name: PaymentRequest
+    PaymentsRequest:
+      required:
+      - paymentsId
+      - requestHeader
+      type: object
+      properties:
+        requestHeader:
+          $ref: '#/components/schemas/RequestHeaderWithoutToken'
+        paymentsId:
+          type: array
+          items:
+            type: string
+      description: Klasa zapytania o statusy wielu płatności / Payments Request Class
+      xml:
+        name: PaymentsRequest
+    AddPaymentResponse:
+      required:
+      - detailedStatus
+      - generalStatus
+      - responseHeader
+      - transactionId
+      type: object
+      properties:
+        responseHeader:
+          $ref: '#/components/schemas/ResponseHeader'
+        transactionId:
+          type: string
+          description: Identyfiaktor płatności / Transaction ID
+        generalStatus:
+          $ref: '#/components/schemas/PaymentStatus'
+        detailedStatus:
+          type: string
+          description: Status płatności / Detailed payment status
+      description: Klasa odpowiedzi zlecenia płatności / Payment Add Response Class
+    PaymentInfo:
+      required:
+      - detailedStatus
+      - generalStatus
+      - transactionId
+      type: object
+      properties:
+        transactionId:
+          type: string
+          description: Identyfiaktor płatności / Transaction ID
+        generalStatus:
+          $ref: '#/components/schemas/PaymentStatus'
+        detailedStatus:
+          type: string
+          description: Szczegółowy status płatności / Detailed payment status
+      description: Klasa informacji o płatności / Payment Information Class
+    GetPaymentResponse:
+      required:
+      - detailedStatus
+      - generalStatus
+      - responseHeader
+      - transactionId
+      properties:
+        responseHeader:
+          $ref: '#/components/schemas/ResponseHeader'
+      description: Klasa odpowiedzi na pytanie o płatność / Payment Get Response Class
+      allOf:
+      - $ref: '#/components/schemas/PaymentInfo'
+    PaymentsResponse:
+      required:
+      - responseHeader
+      type: object
+      properties:
+        responseHeader:
+          $ref: '#/components/schemas/ResponseHeader'
+        payments:
+          type: array
+          items:
+            $ref: '#/components/schemas/PaymentInfo'
+      description: Klasa odpowiedzi na pytanie o wiele płatności
+    ConfirmationOfFundsRequest:
+      required:
+      - accountNumber
+      - amount
+      - currency
+      - requestHeader
+      type: object
+      properties:
+        requestHeader:
+          $ref: '#/components/schemas/RequestHeaderWithoutToken'
+        accountNumber:
+          maxLength: 34
+          type: string
+          description: Numer konta / Account number
+        amount:
+          pattern: ^\d*\.\d{2}$
+          type: string
+          description: Wielkość środków której dotyczy zaptanie / Amount of the transaction
+        currency:
+          maxLength: 3
+          type: string
+          description: Kod ISO Waluty (waluta transakcji) / Currency of transaction (ISO)
+      description: Klasa zapytania o dostępne środki płatnicze na rachunku / Confirmation of Funds Request Class
+      xml:
+        name: ConfirmationOfFundsRequest
+    ConfirmationOfFundsResponse:
+      required:
+      - fundsAvailable
+      - responseHeader
+      type: object
+      properties:
+        responseHeader:
+          $ref: '#/components/schemas/ResponseHeader'
+        fundsAvailable:
+          type: boolean
+          description: Status - Czy środki są dostępne / Status - are funds available
+          enum:
+          - true
+          - false
+      description: Klasa odpowiedzi na zapytanie o dostępne środki płatnicze na rachunku / Confirmation of Funds Response Class
+    Error:
+      type: object
+      properties:
+        responseHeader:
+          $ref: '#/components/schemas/ResponseHeader'
+        code:
+          type: string
+          description: Kod błędu / Error code
+        message:
+          type: string
+          description: Opis błędu / Error message
+      description: Klasa zawierająca informacje o zwracanym błędzie / Error class
+    AccountIban:
+      maxLength: 34
+      type: string
+      description: Numer konta w formacie IBAN
+    AccountForeign:
+      maxLength: 34
+      type: string
+      description: Numer konta, format dla przelewów zagranicznych
+    RequestHeaderWithoutToken:
+      type: object
+      properties:
+        requestId:
+          type: string
+          description: Identyfikator żądania / Request ID
+        userAgent:
+          type: string
+          description: Browser agent dla PSU / PSU browser agent
+        ipAddress:
+          type: string
+          description: IP adres / IP address
+        sendDate:
+          type: string
+          description: 'Oryginalna data wysłania, format: 2017-11-24T14:13:05.424Z
+            / Send date'
+          format: datetime
+        tppId:
+          type: string
+          description: Identyfikator TPP / TPP ID
+        isCorporateContext:
+          type: boolean
+          description: (true / false) Znacznik oznaczający czy żądanie jest wysyłane w kontekście PSU korporacyjnego
+        psuIdentifierType:
+          type: string
+          description: Typ identyfikatora PSU / Type of identifier of the PSU
+          enum:
+          - N
+          - P
+          - R
+          - "1"
+          - "2"
+          - "3"
+        psuIdentifierValue:
+          type: string
+          description: Wartość identyfikatora klienta / The value of the PSU's identifier
+      description: Klasa zawierająca informacje o PSU / PSU Information Class
+    RequestHeaderWithoutTokenCallback:
+      required:
+      - callbackURL, apiKey
+      properties:
+        callbackURL:
+          type: string
+          description: adres funkcji zwrotnej / callback URL
+        apiKey:
+          type: string
+          description: API key dla wywołania funkcji zwrotnej / callback API key
+      description: Klasa zawierająca informacje o PSU and callback URL / PSU and callback URL Information Class
+      allOf:
+      - $ref: '#/components/schemas/RequestHeaderWithoutToken'
+    RequestHeaderCallback:
+      required:
+      - token
+      properties:
+        token:
+          type: string
+          description: Token autoryzacyjny / Authorization token
+        callbackURL:
+          type: string
+          description: adres funkcji zwrotnej / callback URL
+        apiKey:
+          type: string
+          description: API key dla wywołania funkcji zwrotnej / callback API key
+      description: Klasa zawierająca informacje o PSU and callback URL / PSU and callback URL Information Class
+      allOf:
+      - $ref: '#/components/schemas/RequestHeaderWithoutToken'
+    RequestHeader:
+      required:
+      - token
+      properties:
+        token:
+          type: string
+          description: Token autoryzacyjny / Authorization token
+      description: Klasa zawierająca informacje o PSU and callback URL / PSU and callback URL Information Class
+      allOf:
+      - $ref: '#/components/schemas/RequestHeaderWithoutToken'
+    RequestHeaderAIS:
+      required:
+      - token
+      properties:
+        token:
+          type: string
+          description: Token autoryzacyjny / Authorization token
+        isDirectPsu:
+          type: boolean
+          description: Znacznik informujący czy request jest przesłany bezpośrednio przez PSU / Is request sent by PSU directly
+      description: Klasa zawierająca informacje o PSU / PSU Information Class
+      allOf:
+      - $ref: '#/components/schemas/RequestHeaderWithoutToken'
+    RequestHeaderAISCallback:
+      required:
+      - token
+      properties:
+        token:
+          type: string
+          description: Token autoryzacyjny / Authorization token
+        isDirectPsu:
+          type: boolean
+          description: Znacznik informujący czy request jest przesłany bezpośrednio przez PSU / Is request sent by PSU directly
+        callbackURL:
+          type: string
+          description: adres funkcji zwrotnej / callback URL
+        apiKey:
+          type: string
+          description: API key dla wywołania funkcji zwrotnej / callback API key
+      description: Klasa zawierająca informacje o PSU and callback URL / PSU and callback URL Information Class
+      allOf:
+      - $ref: '#/components/schemas/RequestHeaderWithoutToken'
+    ResponseHeader:
+      type: object
+      properties:
+        requestId:
+          type: string
+          description: Identyfikator żądania / Request ID
+        sendDate:
+          type: string
+          description: 'Data odpowiedzi, format: 2017-11-24T14:13:05.424Z / Send date'
+          format: datetime
+        isCallback:
+          type: boolean
+          description: Znacznik określający czy odpowiedz zostanie przekazana w formie wywołania zwrotnego. true - gdy odpowiedz w formie wywołania zwrotnego. Inna dopuszczalna wartość to false.
+      description: Klasa zawierająca zwrotne metadane / Metadata Class
+    SenderPIS:
+      type: object
+      properties:
+        accountNumber:
+          $ref: '#/components/schemas/AccountIban'
+        name:
+          maxLength: 140
+          type: string
+          description: Nazwa nadawcy / Sender name
+      description: Klasa zawierająca dane nadawcy używana w żądaniach PIS / PIS Sender Data Class
+    Bank:
+      type: object
+      properties:
+        bicOrSwift:
+          maxLength: 11
+          type: string
+          description: Numer BIC/SWIFT Banku / BIC/SWIFT number
+        name:
+          maxLength: 70
+          type: string
+          description: Nazwa Banku / Bank's name
+        code:
+          maxLength: 10
+          type: string
+          description: Kod Banku, dla przelewów zagranicznych / Bank's code
+        countryCode:
+          maxLength: 3
+          type: string
+          description: Kod kraju 3166-1 / Country code
+        address:
+          $ref: '#/components/schemas/Address'
+      description: Klasa zawierająca dane banku używana w żądaniach AIS / AIS Bank Data Class
+    BankAccountInfo:
+      type: object
+      properties:
+        bicOrSwift:
+          maxLength: 8
+          type: string
+          description: Numer BIC/SWIFT Banku / BIC/SWIFT number
+        name:
+          maxLength: 70
+          type: string
+          description: Nazwa Banku / Bank's name
+        address:
+          $ref: '#/components/schemas/Address'
+      description: Klasa zawierająca dane banku / Bank Data Class
+    TransferDataBase:
+      type: object
+      properties:
+        description:
+          maxLength: 140
+          type: string
+          description: Pole opisujące przelew / Description
+        amount:
+          pattern: ^\d*\.\d{2}$
+          type: string
+          description: Kwota przelewu / Amount
+        executionDate:
+          maxLength: 10
+          type: string
+          description: Data wykonania przelewu / Date when the transfer was executed (YYYY-MM-DD)
+          format: date
+      description: Bazowa klasa dla TransferData / TransferData Base Class
+    TransferData:
+      required:
+      - amount
+      - description
+      properties:
+        currency:
+          maxLength: 3
+          type: string
+          description: Waluta / Currency
+      description: Klasa zawierająca dane przelewu / Transfer Data Class
+      allOf:
+      - $ref: '#/components/schemas/TransferDataBase'
+    TransferDataCurrencyRequired:
+      required:
+      - amount
+      - currency
+      - description
+      properties:
+        currency:
+          maxLength: 3
+          type: string
+          description: Waluta, domyślnie EUR przelewów zagranicznych / Currency
+      description: Klasa zawierająca dane przelewu / Transfer Data Class
+      allOf:
+      - $ref: '#/components/schemas/TransferDataBase'
+    SenderRecipient:
+      type: object
+      properties:
+        accountNumber:
+          type: string
+          description: Numer konta odbiorcy / Account number
+        accountMassPayment:
+          type: string
+          description: Numer wirtualny rachunku odbiorcy w formacie IBAN / Virtual account name
+        bank:
+          $ref: '#/components/schemas/Bank'
+        nameAddress:
+          $ref: '#/components/schemas/NameAddress'
+      description: Klasa zawierająca dane nadawcy/odbiorcy używana w żądaniach AIS / AIS Sender Recipient Data Class
+    RecipientPIS:
+      required:
+      - accountNumber
+      - name
+      type: object
+      properties:
+        accountNumber:
+          $ref: '#/components/schemas/AccountIban'
+        name:
+          maxLength: 140
+          type: string
+          description: Recipient's name / Name
+        address:
+          $ref: '#/components/schemas/Address'
+      description: Klasa zawierająca dane odbiorcy używana w żądaniach PIS / PIS Recipient Data Class
+    RecipientPISTax:
+      required:
+      - accountNumber
+      - address
+      type: object
+      properties:
+        accountNumber:
+          $ref: '#/components/schemas/AccountIban'
+        address:
+          $ref: '#/components/schemas/Address'
+      description: Klasa zawierająca dane odbiorcy używana w żądaniach PIS dla operacji podatkowych / PIS Tax Recipient Data Class
+    RecipientPISForeign:
+      required:
+      - accountNumber
+      - name
+      type: object
+      properties:
+        accountNumber:
+          $ref: '#/components/schemas/AccountForeign'
+        name:
+          maxLength: 140
+          type: string
+          description: Recipient's name / Name
+        address:
+          $ref: '#/components/schemas/Address'
+      description: Klasa zawierająca dane odbiorcy używana w żądaniach PIS dla operacji zagranicznych / PIS foreign Recipient Data Class
+    Address:
+      maxItems: 4
+      minItems: 1
+      type: array
+      description: Klasa zawierająca dane adresu pocztowego / Postal address Class
+      items:
+        maxLength: 35
+        type: string
+    NameAddress:
+      type: object
+      properties:
+        name:
+          maxLength: 140
+          type: string
+          description: Nazwa / Name
+        address:
+          maxItems: 3
+          minItems: 1
+          type: array
+          items:
+            maxLength: 35
+            type: string
+      description: Klasa zawierająca dane nazwy i adresu w postaci czterech linii danych / Simple name and  postal address Class
+    PageInfo:
+      type: object
+      properties:
+        previousPage:
+          type: string
+          description: 'Użyte w celu stronicowania danych: poprzednia strona (np:
+            numer konta lub transakcji rozpoczynający poprzednią stronę) / Previous
+            page'
+        nextPage:
+          type: string
+          description: 'Użyte w celu stronicowania danych: następna strona (np: numer
+            konta lub transakcji rozpoczynający następną stronę) / Next page'
+      description: Klasa zawierająca dane pozwalajace na korzystanie z mechanizmu stronicowania / Paging Information Class
+    CurrencyRate:
+      type: object
+      properties:
+        rate:
+          pattern: ^(0|([1-9][0-9]{0,3}))(\.[0-9]{1,7})?$
+          type: number
+          description: Kursy przewalutowania / Currency exchange rate
+          format: double
+        fromCurrency:
+          maxLength: 3
+          type: string
+          description: Waluta rachunku, kod ISO / from Currency, ISO code
+        toCurrency:
+          maxLength: 3
+          type: string
+          description: Waluta rachunku, kod ISO / to Currency, ISO code
+      description: Klasa zawierająca kursy przewalutowań / Currency rate
+    PaymentStatus:
+      type: string
+      description: Słownik statusów płatności
+      enum:
+      - submitted
+      - cancelled
+      - pending
+      - done
+      - rejected
+    Map:
+      type: object
+      additionalProperties:
+        type: string
+      description: Klasa mapy <string, string> / Map (Dictionary) class
+    DictionaryItem:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Kod pozycji słownika / Code
+        description:
+          type: string
+          description: Opis pozycji słownika / Description
+      description: Klasa zawierająca dane elementu/pozycji słownika / Dictionary Item Class
+    ScopeDetailsInput:
+      required:
+      - consentId
+      - privilegeList
+      - recurringIndicator
+      - resource
+      - scopeGroupType
+      - scopeTimeDuration
+      - scopeTimeLimit
+      - throttlingPolicy
+      type: object
+      properties:
+        privilegeList:
+          $ref: '#/components/schemas/ScopeDetailsInputPrivilegeList'
+        scopeGroupType:
+          type: string
+          description: Type of consent
+          enum:
+          - accountInformationService
+          - paymentInformationService
+          - confirmationOfFunds
+        consentId:
+          type: string
+          description: Id of consent
+        resource:
+          $ref: '#/components/schemas/ScopeDetailsInputResource'
+        recurringIndicator:
+          type: boolean
+          description: Whether the consent is multiple or one-time
+        scopeTimeDuration:
+          type: integer
+          description: Validity in minutes
+          format: int32
+        scopeTimeLimit:
+          type: string
+          description: consent valid until
+          format: datetime
+        throttlingPolicy:
+          type: string
+          description: Throttling policy
+          enum:
+          - psd2Regulatory
+      description: Zakres, limity, parametry i czas ważności zgód, o które prosi TPP. / Scope, limits, parameters and expiration time of consents requested by TPP
+    ScopeDetailsOutput:
+      required:
+      - consentId
+      - privilegeList
+      - recurringIndicator
+      - resource
+      - scopeGroupType
+      - scopeTimeDuration
+      - scopeTimeLimit
+      - throttlingPolicy
+      type: object
+      properties:
+        privilegeList:
+          $ref: '#/components/schemas/ScopeDetailsOutputPrivilegeList'
+        scopeGroupType:
+          type: string
+          description: Type of consent
+          enum:
+          - accountInformationService
+          - paymentInformationService
+          - confirmationOfFunds
+        consentId:
+          type: string
+          description: Id of consent
+        resource:
+          $ref: '#/components/schemas/ScopeDetailsOutputResource'
+        recurringIndicator:
+          type: boolean
+          description: Whether the consent is multiple or one-time
+        scopeTimeDuration:
+          type: integer
+          description: Validity in minutes
+          format: int32
+        scopeTimeLimit:
+          type: string
+          description: consent valid until
+          format: datetime
+        throttlingPolicy:
+          type: string
+          description: Throttling policy
+          enum:
+          - psd2Regulatory
+      description: Zakres, limity, parametry i czas ważności zgód, które potwierdza ASPSP / Scope, limits, parameters and expiration time of consents that are confimed by ASPSP
+      example:
+        consentId: consentId
+        resource:
+          accounts:
+          - accounts
+          - accounts
+        scopeTimeLimit: scopeTimeLimit
+        recurringIndicator: true
+        scopeTimeDuration: 3
+        throttlingPolicy: psd2Regulatory
+        scopeGroupType: accountInformationService
+        privilegeList:
+          ais:transactionsDone:
+            notAfter: notAfter
+            scopeUsageLimit: 1
+            maxAllowedHistoryLong: 880
+            notBefore: notBefore
+          ais:holds:
+            notAfter: notAfter
+            scopeUsageLimit: 1
+            maxAllowedHistoryLong: 880
+            notBefore: notBefore
+          ais:transactionsRejected:
+            notAfter: notAfter
+            scopeUsageLimit: 1
+            maxAllowedHistoryLong: 880
+            notBefore: notBefore
+          ais:accounts:
+            notAfter: notAfter
+            scopeUsageLimit: 1
+            maxAllowedHistoryLong: 880
+            notBefore: notBefore
+          pis:tax:
+            scopeUsageLimit: 1
+          pis:payment:
+            scopeUsageLimit: 1
+          pis:domestic:
+            scopeUsageLimit: 1
+          ais:transactionDetail:
+            notAfter: notAfter
+            scopeUsageLimit: 1
+            maxAllowedHistoryLong: 880
+            notBefore: notBefore
+          caf:confirmationOfFunds:
+            amount: 9.301444243932576
+            scopeUsageLimit: 1
+            currency: currency
+          ais:transactionsPending:
+            notAfter: notAfter
+            scopeUsageLimit: 1
+            maxAllowedHistoryLong: 880
+            notBefore: notBefore
+          pis:multiplePayments:
+            scopeUsageLimit: 1
+          pis:foreign:
+            scopeUsageLimit: 1
+    PrivilegeAisAspspInSimple:
+      type: object
+      properties:
+        scopeUsageLimit:
+          minimum: 1
+          type: integer
+          description: Limit of usages
+          format: int32
+      description: Lista atrybutów uprawnienia usługi AIS będących przedmiotem zapytania o zgodę PSU / The list of attributes of the privilege of the AIS service that are the subject of the request for PSU's consent
+    PrivilegeAisAspspIn:
+      required:
+      - maxAllowedHistoryLong
+      type: object
+      properties:
+        scopeUsageLimit:
+          minimum: 1
+          type: integer
+          description: Limit of usages
+          format: int32
+        maxAllowedHistoryLong:
+          maximum: 1460
+          minimum: 1
+          type: integer
+          description: How much history is allowed in days
+          format: int32
+      description: Lista atrybutów uprawnienia usługi AIS będących przedmiotem zapytania o zgodę PSU / The list of attributes of the privilege of the AIS service that are the subject of the request for PSU's consent
+    PrivilegeAisAspspOutSimple:
+      type: object
+      properties:
+        scopeUsageLimit:
+          minimum: 1
+          type: integer
+          description: Limit of usages
+          format: int32
+      description: Lista atrybutów uprawnienia usługi AIS dla których została wyrażona zgoda przez PSU / The list of attributes of the privilege of the AIS service that the PSU's consent has been confirmed
+    PrivilegeAisAspspOut:
+      required:
+      - maxAllowedHistoryLong
+      - notAfter
+      - notBefore
+      type: object
+      properties:
+        scopeUsageLimit:
+          minimum: 1
+          type: integer
+          description: Limit of usages
+          format: int32
+        maxAllowedHistoryLong:
+          maximum: 1460
+          minimum: 1
+          type: integer
+          description: How much history is allowed in days
+          format: int32
+        notBefore:
+          type: string
+          description: Minimum date for transaction that will be returned
+          format: datetime
+        notAfter:
+          type: string
+          description: Maximum date for transaction that will be returned
+          format: datetime
+      description: Lista atrybutów uprawnienia usługi AIS dla których została wyrażona zgoda przez PSU / The list of attributes of the privilege of the AIS service that the PSU's consent has been confirmed
+      example:
+        notAfter: notAfter
+        scopeUsageLimit: 1
+        maxAllowedHistoryLong: 880
+        notBefore: notBefore
+    PrivilegePayment:
+      type: object
+      properties:
+        scopeUsageLimit:
+          minimum: 1
+          type: integer
+          description: Limit of usages
+          format: int32
+        transactionId:
+          type: string
+          description: Identyfikator płatności / Transaction ID
+      description: Lista atrybutów uprawnienia do żądania statusu płatności / The list of attributes of the payment status request privilege
+    PrivilegeDomesticTransfer:
+      type: object
+      properties:
+        scopeUsageLimit:
+          minimum: 1
+          type: integer
+          description: Limit of usages
+          format: int32
+        recipient:
+          $ref: '#/components/schemas/RecipientPIS'
+        sender:
+          $ref: '#/components/schemas/SenderPIS'
+        transferData:
+          $ref: '#/components/schemas/TransferData'
+      description: Lista atrybutów uprawnienia do inicjacji przelewu zwykłego / The list of attributes of the domestic transfer request initiation privilege
+    PrivilegeForeignTransferEEA:
+      type: object
+      properties:
+        scopeUsageLimit:
+          minimum: 1
+          type: integer
+          description: Limit of usages
+          format: int32
+        recipient:
+          $ref: '#/components/schemas/RecipientPISForeign'
+        sender:
+          $ref: '#/components/schemas/SenderPIS'
+        transferData:
+          $ref: '#/components/schemas/TransferDataCurrencyRequired'
+      description: Lista atrybutów uprawnienia do inicjacji przelewu zagranicznego EEA / The list of attributes of the EEA foreign transfer request initiation privilege
+    PrivilegeForeignTransferNonEEA:
+      type: object
+      properties:
+        scopeUsageLimit:
+          minimum: 1
+          type: integer
+          description: Limit of usages
+          format: int32
+        recipient:
+          $ref: '#/components/schemas/RecipientPISForeign'
+        recipientBank:
+          $ref: '#/components/schemas/Bank'
+        sender:
+          $ref: '#/components/schemas/SenderPIS'
+        transferData:
+          $ref: '#/components/schemas/TransferDataCurrencyRequired'
+      description: Lista atrybutów uprawnienia do inicjacji przelewu zagranicznego bez EEA / The list of attributes of the non-EEA foreign transfer request initiation privilege
+    PrivilegeTaxTransfer:
+      type: object
+      properties:
+        scopeUsageLimit:
+          minimum: 1
+          type: integer
+          description: Limit of usages
+          format: int32
+        recipient:
+          $ref: '#/components/schemas/RecipientPISTax'
+        sender:
+          $ref: '#/components/schemas/SenderPIS'
+        transferData:
+          $ref: '#/components/schemas/TransferDataCurrencyRequired'
+        usInfo:
+          $ref: '#/components/schemas/TransactionInfoTax'
+      description: Lista atrybutów uprawnienia do inicjacji przelewu urzędu podatkowego / The list of attributes of the tax transfer request initiation privilege
+    PrivilegeCaF:
+      required:
+      - amount
+      - currency
+      type: object
+      properties:
+        scopeUsageLimit:
+          minimum: 1
+          type: integer
+          description: Limit of usages
+          format: int32
+        amount:
+          type: number
+          format: decimal
+        currency:
+          maxLength: 3
+          type: string
+      description: Uprawnienie usługi CAF, będącej przedmiotem zapytania o zgodę PSU / The privilege of the AIS service that is the subject of the request for PSU's consent
+      example:
+        amount: 9.301444243932576
+        scopeUsageLimit: 1
+        currency: currency
+    ScopeDetailsInputPrivilegeList:
+      type: object
+      properties:
+        ais:accounts:
+          $ref: '#/components/schemas/PrivilegeAisAspspInSimple'
+        ais:account:
+          $ref: '#/components/schemas/PrivilegeAisAspspInSimple'
+        ais:holds:
+          $ref: '#/components/schemas/PrivilegeAisAspspIn'
+        ais:transactionsDone:
+          $ref: '#/components/schemas/PrivilegeAisAspspIn'
+        ais:transactionsPending:
+          $ref: '#/components/schemas/PrivilegeAisAspspIn'
+        ais:transactionsRejected:
+          $ref: '#/components/schemas/PrivilegeAisAspspIn'
+        ais:transactionDetail:
+          $ref: '#/components/schemas/PrivilegeAisAspspInSimple'
+        pis:payment:
+          $ref: '#/components/schemas/PrivilegePayment'
+        pis:domestic:
+          $ref: '#/components/schemas/PrivilegeDomesticTransfer'
+        pis:EEA:
+          $ref: '#/components/schemas/PrivilegeForeignTransferEEA'
+        pis:nonEEA:
+          $ref: '#/components/schemas/PrivilegeForeignTransferNonEEA'
+        pis:tax:
+          $ref: '#/components/schemas/PrivilegeTaxTransfer'
+        caf:confirmationOfFunds:
+          $ref: '#/components/schemas/PrivilegeCaF'
+      description: Pełna lista uprawnień będących przedmiotem zapytania o zgodę PSU / The list of all privileges that are the subject of the request for PSU's consent
+    ScopeDetailsInputResource:
+      required:
+      - accounts
+      type: object
+      properties:
+        accounts:
+          type: array
+          description: Account numbers in IBAN format
+          items:
+            type: string
+            description: Account numbers List
+      description: Pełna lista zasobów - rachunków płatniczych - których dotyczy żądanie zgody PSU / The full list o resources (accounts) that the PSU's consent is connected with
+      example:
+        accounts:
+        - accounts
+        - accounts
+    ScopeDetailsOutputResource:
+      required:
+      - accounts
+      type: object
+      properties:
+        accounts:
+          type: array
+          description: Account numbers in IBAN format
+          items:
+            type: string
+            description: Account numbers List
+      description: Pełna lista zasobów - rachunków płatniczych - których dotyczy uzyskana zgoda od PSU / The full list o resources (accounts) that the gained PSU's consent is connected with
+      example:
+        accounts:
+        - accounts
+        - accounts
+    ScopeDetailsOutputPrivilegeList:
+      type: object
+      properties:
+        ais:accounts:
+          $ref: '#/components/schemas/PrivilegeAisAspspOutSimple'
+        ais:account:
+          $ref: '#/components/schemas/PrivilegeAisAspspOutSimple'
+        ais:holds:
+          $ref: '#/components/schemas/PrivilegeAisAspspOut'
+        ais:transactionsDone:
+          $ref: '#/components/schemas/PrivilegeAisAspspOut'
+        ais:transactionsPending:
+          $ref: '#/components/schemas/PrivilegeAisAspspOut'
+        ais:transactionsRejected:
+          $ref: '#/components/schemas/PrivilegeAisAspspOut'
+        ais:transactionDetail:
+          $ref: '#/components/schemas/PrivilegeAisAspspOutSimple'
+        pis:payment:
+          $ref: '#/components/schemas/PrivilegePayment'
+        pis:domestic:
+          $ref: '#/components/schemas/PrivilegeDomesticTransfer'
+        pis:EEA:
+          $ref: '#/components/schemas/PrivilegeForeignTransferEEA'
+        pis:nonEEA:
+          $ref: '#/components/schemas/PrivilegeForeignTransferNonEEA'
+        pis:tax:
+          $ref: '#/components/schemas/PrivilegeTaxTransfer'
+        caf:confirmationOfFunds:
+          $ref: '#/components/schemas/PrivilegeCaF'
+      description: Pełna lista uprawnień, dla których została wyrażona zgoda przez PSU / The list of all privileges that the PSU's consent has been confirmed
+      example:
+        ais:transactionsDone:
+          notAfter: notAfter
+          scopeUsageLimit: 1
+          maxAllowedHistoryLong: 880
+          notBefore: notBefore
+        ais:holds:
+          notAfter: notAfter
+          scopeUsageLimit: 1
+          maxAllowedHistoryLong: 880
+          notBefore: notBefore
+        ais:transactionsRejected:
+          notAfter: notAfter
+          scopeUsageLimit: 1
+          maxAllowedHistoryLong: 880
+          notBefore: notBefore
+        ais:accounts:
+          notAfter: notAfter
+          scopeUsageLimit: 1
+          maxAllowedHistoryLong: 880
+          notBefore: notBefore
+        pis:tax:
+          scopeUsageLimit: 1
+        pis:payment:
+          scopeUsageLimit: 1
+        pis:domestic:
+          scopeUsageLimit: 1
+        ais:transactionDetail:
+          notAfter: notAfter
+          scopeUsageLimit: 1
+          maxAllowedHistoryLong: 880
+          notBefore: notBefore
+        caf:confirmationOfFunds:
+          amount: 9.301444243932576
+          scopeUsageLimit: 1
+          currency: currency
+        ais:transactionsPending:
+          notAfter: notAfter
+          scopeUsageLimit: 1
+          maxAllowedHistoryLong: 880
+          notBefore: notBefore
+        pis:multiplePayments:
+          scopeUsageLimit: 1
+        pis:foreign:
+          scopeUsageLimit: 1
+  parameters:
+    authorizationParam:
+      name: Authorization
+      in: header
+      description: The value of the Authorization header should consist of 'type' + 'credentials', where for the approach using the 'type' token should be 'Bearer'.
+      required: true
+      style: SIMPLE
+      explode: false
+      schema:
+        type: string
+    acceptEncodingParam:
+      name: Accept-Encoding
+      in: header
+      description: Gzip, deflate
+      required: true
+      style: SIMPLE
+      explode: false
+      schema:
+        type: string
+        enum:
+        - gzip
+        - deflate
+    acceptLanguageParam:
+      name: Accept-Language
+      in: header
+      description: Prefered language of response
+      required: true
+      style: SIMPLE
+      explode: false
+      schema:
+        type: string
+    acceptCharsetParam:
+      name: Accept-Charset
+      in: header
+      description: UTF-8
+      required: true
+      style: SIMPLE
+      explode: false
+      schema:
+        type: string
+        enum:
+        - utf-8
+    xjwsSignatureParam:
+      name: X-JWS-SIGNATURE
+      in: header
+      description: Detached JWS signature of the body of the payload
+      required: true
+      style: SIMPLE
+      explode: false
+      schema:
+        type: string
+  securitySchemes:
+    xs2a_auth:
+      type: OAUTH2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://apiHost/auth/authorize
+          tokenUrl: https://apiHost/auth/token
+          scopes:
+            ais:accounts: Permission to execute AIS-Accounts
+            ais:holds: Permission to execute AIS-Holds
+            ais:transactionsDone: Permission to execute AIS-TransactionsDone
+            ais:transactionsPending: Permission to execute AIS-TransactionsPending
+            ais:transactionsRejected: Permission to execute AIS-TransactionsRejected
+            ais:transationDetail: Permission to execute AIS-TransationDetail
+            pis:multiplePayments: Permission to execute PIS-MultiplePayments
+            pis:payment: Permission to execute PIS-Payment
+            pis:domestic: Permission to execute PIS-Domestic
+            pis:EEA: Permission to execute PIS-EEA
+            pis:nonEEA: Permission to execute PIS-NonEEA
+            pis:tax: Permission to execute PIS-Tax
+            caf:confirmationOfFunds: Permission to execute CAF-ConfirmationOfFunds
+  extensions: {}
